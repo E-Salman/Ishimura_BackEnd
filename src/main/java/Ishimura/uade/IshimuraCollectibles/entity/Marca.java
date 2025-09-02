@@ -1,32 +1,27 @@
 package Ishimura.uade.IshimuraCollectibles.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
+import java.util.List;
 
+@Data
 @Entity
 public class Marca {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private String nombre;
 
-    @OneToOne(mappedBy = "lineaMarca")
-    private Linea marcaLinea;
+    // @OneToMany(mappedBy = "marca")
+    // private List<Linea> lineas;
 
-    // @ManyToOne
-    // @JoinTable(name = "pertenece",
-    // joinColumns = @JoinColumn(name = "marca_id"),
-    // inverseJoinColumns = @JoinColumn(name = "linea_id"))
-    // private Linea marcaLinea;
+    public Marca() {
+    }
 
+    public Marca(String nombre) {
+        this.nombre = nombre;
+    }
 }
