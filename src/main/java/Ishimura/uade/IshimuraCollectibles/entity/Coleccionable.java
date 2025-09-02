@@ -17,9 +17,19 @@ public class Coleccionable {
     private Long id;
 
     @Column
+    private String nombre;
+    @Column
     private String description;
+    @Column
+    private Double precio;
+    // @Column
+    // private Image;
 
     @OneToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
+
+    @OneToOne
+    @JoinColumn(name = "linea_id", referencedColumnName = "id")
+    private Linea coleccionableLinea;
 }

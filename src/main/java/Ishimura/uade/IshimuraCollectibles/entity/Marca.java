@@ -15,8 +15,8 @@ public class Marca {
     @Column(nullable = false)
     private String nombre;
 
-    //@OneToMany(mappedBy = "marca")
-    //private List<Linea> lineas;
+    @OneToOne(mappedBy = "lineaMarca")
+    private Linea linea;
 
     public Marca() {
     }

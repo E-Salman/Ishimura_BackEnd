@@ -1,7 +1,5 @@
 package Ishimura.uade.IshimuraCollectibles.entity;
 
-import java.util.List;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,22 +8,24 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Data
-@Table(name = "orden de compra")
-public class Orden {
+public class Linea {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column
-    private Long count;
+    private String nombre;
 
-    @ManyToOne
-    @JoinColumn(name = "usuario_id") //Crea una columna usuario_id en la tabla orden en vez de una tabla separada para la relacion
-    private Usuario usuario;         //como en @ManyToMany
+    @OneToOne(mappedBy = "coleccionableLinea")
+    private Coleccionable lineaColeccionable;
+
+    @OneToOne
+    @JoinTable(name = "pertenece", joinColumns = @JoinColumn(name = "linea_id"), inverseJoinColumns = @JoinColumn(name = "marca_id"))
+    private Marca lineaMarca;
+
 }
