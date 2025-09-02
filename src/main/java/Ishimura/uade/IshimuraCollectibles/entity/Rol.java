@@ -11,18 +11,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 
-@Entity
-public class Rol {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column
-    private String description;
-
-    @OneToMany(mappedBy = "usuarioRol")
-    private List<Usuario> usuarios;
-
-    // @OneToOne
-    // private User user;
+public enum Rol {
+    USER,
+    ADMIN
 }
