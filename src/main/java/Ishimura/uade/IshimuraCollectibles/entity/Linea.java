@@ -6,30 +6,26 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.Data;
 
-@Data
 @Entity
-public class Coleccionable {
+public class Linea {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column
     private String nombre;
-    @Column
-    private String description;
-    @Column
-    private Double precio;
-    // @Column
-    // private Image;
+
+    @OneToOne(mappedBy = "coleccionableLinea")
+    private Coleccionable lineaColeccionable;
 
     @OneToOne
-    @JoinColumn(name = "category_id", referencedColumnName = "id")
-    private Category category;
+    @JoinTable(name = "pertenece", joinColumns = @JoinColumn(name = "linea_id"), inverseJoinColumns = @JoinColumn(name = "marca_id"))
+    private Marca lineaMarca;
 
-    @OneToOne
-    @JoinColumn(name = "linea_id", referencedColumnName = "id")
-    private Linea coleccionableLinea;
 }
