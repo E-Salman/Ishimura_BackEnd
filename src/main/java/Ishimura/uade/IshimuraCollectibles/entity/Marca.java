@@ -1,8 +1,9 @@
 package Ishimura.uade.IshimuraCollectibles.entity;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.Data;
-import java.util.List;
 
 @Data
 @Entity
@@ -15,11 +16,11 @@ public class Marca {
     @Column(nullable = false)
     private String nombre;
 
-    @OneToOne(mappedBy = "lineaMarca")
-    private Linea linea;
+    // Relación con Linea (lado inverso, no crea columna extra)
+    @OneToMany
+    private List<Linea> lineas;
 
-    public Marca() {
-    }
+    public Marca() {}
 
     public Marca(String nombre) {
         this.nombre = nombre;
