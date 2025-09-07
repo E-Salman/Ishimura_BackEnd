@@ -6,10 +6,10 @@ import lombok.Data;
 @Data
 @Entity
 @Table(
-    name = "orden_articulos",
-    uniqueConstraints = @UniqueConstraint(columnNames = {"orden_id", "coleccionable_id"})
+    name = "orden_articulo",
+    uniqueConstraints = @UniqueConstraint(columnNames = {"orden_compra_id", "coleccionable_id"})
 )
-public class OrdenArticulo {
+public class Orden_Articulo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,8 +17,8 @@ public class OrdenArticulo {
 
     // FK a la cabecera
     @ManyToOne(optional = false)
-    @JoinColumn(name = "orden_id", nullable = false)
-    private Orden orden;
+    @JoinColumn(name = "orden_compra_id", nullable = false)
+    private Orden_Compra ordenCompra;
 
     // FK al producto
     @ManyToOne(optional = false)
@@ -29,3 +29,4 @@ public class OrdenArticulo {
     @Column(nullable = false)
     private Integer cantidad;
 }
+
