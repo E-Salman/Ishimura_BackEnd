@@ -7,9 +7,11 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "ordenes")
-public class Orden {
-  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+@Table(name = "orden_compra")
+public class Orden_Compra {
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @Column(name = "numero_compra", unique = true, nullable = false, length = 20)
@@ -28,6 +30,6 @@ public class Orden {
   @Column(name = "creada_en", nullable = false)
   private java.time.LocalDateTime creadaEn = java.time.LocalDateTime.now();
 
-  @OneToMany(mappedBy = "orden", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<OrdenItem> items = new ArrayList<>();
+  @OneToMany(mappedBy = "ordenCompra", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Orden_Articulo> articulos = new ArrayList<>();
 }
