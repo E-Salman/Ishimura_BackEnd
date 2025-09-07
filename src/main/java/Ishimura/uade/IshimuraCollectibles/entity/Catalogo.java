@@ -14,20 +14,19 @@ public class Catalogo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Relación con Usuario (1:1)
+    
     @OneToOne
     @JoinColumn(name = "usuario_id", referencedColumnName = "id", nullable = false)
     private Usuario usuario;
 
-    // Diccionario Coleccionable -> Stock
     @ElementCollection
     @CollectionTable(
         name = "catalogo_coleccionables",
         joinColumns = @JoinColumn(name = "catalogo_id")
     )
-    @MapKeyJoinColumn(name = "coleccionable_id") // la clave del map = FK a coleccionables
-    @Column(name = "stock")                      // el valor del map = stock
-    private Map<Coleccionable, Integer> coleccionablesConStock = new HashMap<>();
+    @MapKeyJoinColumn(name = "coleccionable_id") // la clave = id del coleccionable
+    @Column(name = "stock")                      // valor= stock
+    private Map<Integer, Integer> coleccionablesConStock = new HashMap<>();
 
     public Catalogo() {
     }
