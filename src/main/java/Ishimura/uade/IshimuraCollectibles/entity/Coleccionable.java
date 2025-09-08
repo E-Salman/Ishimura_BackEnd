@@ -20,8 +20,8 @@ public class Coleccionable {
     @Column
     private Double precio;
 
-    // @Column
-    // private imagen(?);
+    @Column
+    private int idImagen;
 
     // Relación con Category
     @OneToOne
@@ -32,4 +32,5 @@ public class Coleccionable {
     @ManyToOne
     @JoinColumn(name = "linea_id", referencedColumnName = "id")
     private Linea linea;
+
 }

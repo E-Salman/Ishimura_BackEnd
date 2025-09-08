@@ -13,7 +13,8 @@ public class MostrarColeccionableDTO {
     private String nombre;
     private String descripcion;
     private Double precio;
-    // private imagen; //
+    private int idImagen; // preguntar como asociamos correctanmente la imagen, o si la subimos
+                          // directamente por insomnia
 
     private Long lineaId;
     private String lineaNombre;

@@ -8,5 +8,5 @@ import lombok.*;
 public class ColeccionableNombreDTO {
     private Long id;
     private String descripcion;
-    // private imagen;
+    private int idImg;
 }
