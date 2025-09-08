@@ -20,7 +20,6 @@ public class Coleccionable {
     @Column
     private Double precio;
 
-    // Relación con Category
     @OneToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;

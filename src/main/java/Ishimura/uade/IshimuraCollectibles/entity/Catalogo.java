@@ -10,7 +10,7 @@ public class Catalogo {
 
     @Id
     @Column(name = "coleccionable_id")
-    private Long coleccionableId; // PK y FK al mismo tiempo
+    private Long coleccionableId; 
 
     @OneToOne
     @MapsId

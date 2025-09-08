@@ -26,21 +26,21 @@ public class SecurityConfig {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(req -> req
-                // Endpoints públicos
+        
                 .requestMatchers("/api/v1/auth/**").permitAll()
                 .requestMatchers("/error/**").permitAll()
 
-                // Catalogo: listar y obtener por id (USER y ADMIN)
+                // listar el catalogo y poder filtrar por coleccionable 
                 .requestMatchers("/catalogo", "/catalogo/*").hasAnyAuthority(Rol.USER.name(), Rol.ADMIN.name())
 
-                // Catalogo: operaciones de stock (solo ADMIN)
+                //operaciones de stock
                 .requestMatchers("/catalogo/*/incrementarstock", "/catalogo/*/decrementarstock")
                     .hasAnyAuthority(Rol.ADMIN.name())
 
                 // Categorías: acceso a USER y ADMIN
                 .requestMatchers("/categories/**").hasAnyAuthority(Rol.USER.name(), Rol.ADMIN.name())
 
-                // Todo lo demás requiere estar autenticado
+                // todo lo demás requiere estar autenticado
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))

@@ -12,7 +12,7 @@ import Ishimura.uade.IshimuraCollectibles.entity.Coleccionable;
 @Repository
 public interface CatalogoRepository extends JpaRepository<Catalogo, Long> {
 
-    // Cambiar stock con query
+    // cambiar stock con query
     @Modifying
     @Transactional
     @Query("UPDATE Catalogo c SET c.stock = :stock WHERE c.coleccionable.id = :coleccionableId")
