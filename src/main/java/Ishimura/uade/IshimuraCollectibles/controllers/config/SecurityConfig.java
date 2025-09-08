@@ -34,6 +34,8 @@ public class SecurityConfig {
                                                 .requestMatchers("/coleccionable/**").permitAll()
                                                 .requestMatchers("/lineas/**").permitAll()
                                                 .requestMatchers("/marcas/**").permitAll()
+                                                .requestMatchers("/listarColeLineas/**").permitAll()
+                                                .requestMatchers("/mostrar/coleccionable/**").permitAll()
                                                 .requestMatchers("/categories/**")
                                                 .hasAnyAuthority(Rol.USER.name(), Rol.ADMIN.name())
                                                 .anyRequest()

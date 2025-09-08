@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.Optional;
 
 @Service
-public class MostrarColeccionableServiceImpl implements MostrarColeccionableService {
+public class MostrarColeccionableNombreServiceImpl implements MostrarColeccionableService {
 
         @Autowired
         private MostrarColeccionableRepository mostrarAtributosRepository;

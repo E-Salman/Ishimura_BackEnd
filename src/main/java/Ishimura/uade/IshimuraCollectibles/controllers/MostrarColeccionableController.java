@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import Ishimura.uade.IshimuraCollectibles.entity.Coleccionable;
 import Ishimura.uade.IshimuraCollectibles.entity.dto.MostrarColeccionableDTO;
 import Ishimura.uade.IshimuraCollectibles.service.MostrarColeccionableService;
-import Ishimura.uade.IshimuraCollectibles.service.MostrarColeccionableServiceImpl;
+import Ishimura.uade.IshimuraCollectibles.service.MostrarColeccionableNombreServiceImpl;
 
 import java.util.Map;
 
