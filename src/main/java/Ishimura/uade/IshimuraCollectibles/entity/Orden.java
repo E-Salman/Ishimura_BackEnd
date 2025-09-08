@@ -33,3 +33,4 @@ public class Orden {
   @OneToMany(mappedBy = "orden", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Orden_Articulo> articulos = new ArrayList<>();
 }
+//Test
