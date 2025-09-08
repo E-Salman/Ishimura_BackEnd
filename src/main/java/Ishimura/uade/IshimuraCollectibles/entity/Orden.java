@@ -31,5 +31,5 @@ public class Orden {
   private java.time.LocalDateTime creadaEn = java.time.LocalDateTime.now();
 
   @OneToMany(mappedBy = "orden", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Orden_Articulo> articulos = new ArrayList<>();
+  private List<OrdenItem> articulos = new ArrayList<>();
 }

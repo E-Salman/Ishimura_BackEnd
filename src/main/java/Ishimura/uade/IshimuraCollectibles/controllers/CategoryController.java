@@ -25,10 +25,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
-@RequestMapping("categories")
+@RequestMapping("categories") // localhost:4002/categories
 public class CategoryController {
 
-    @Autowired  
+    @Autowired
     private CategoryService categoryService;
 
     @GetMapping

@@ -33,6 +33,10 @@ public class SecurityConfig {
                                                 .requestMatchers("/error/**").permitAll()
                                                 .requestMatchers("/categories/**").hasAnyAuthority(Rol.USER.name(), Rol.ADMIN.name())
                                                 .requestMatchers("/imagenes/**").permitAll()
+                                                .requestMatchers("/coleccionable/**").permitAll()
+                                                .requestMatchers("/lineas/**").permitAll()
+                                                .requestMatchers("/marcas/**").permitAll()
+                                                       
                                                 .anyRequest()
                                                 .authenticated())
                                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
