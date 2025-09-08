@@ -16,7 +16,6 @@ public class Marca {
     @Column(nullable = false)
     private String nombre;
 
-    // Relación con Linea (lado inverso, no crea columna extra)
     @OneToMany
     private List<Linea> lineas;
 

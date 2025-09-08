@@ -1,21 +1,17 @@
 package Ishimura.uade.IshimuraCollectibles.controllers.config;
 
+import Ishimura.uade.IshimuraCollectibles.entity.Rol;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.LogoutHandler;
-
-import Ishimura.uade.IshimuraCollectibles.entity.Rol;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
-
-import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
@@ -37,6 +33,15 @@ public class SecurityConfig {
                                                 .requestMatchers("/lineas/**").permitAll()
                                                 .requestMatchers("/marcas/**").permitAll()
                                                        
+                 // listar el catalogo y poder filtrar por coleccionable 
+                .requestMatchers("/catalogo", "/catalogo/*").hasAnyAuthority(Rol.USER.name(), Rol.ADMIN.name())
+
+                //operaciones de stock
+                .requestMatchers("/catalogo/*/incrementarstock", "/catalogo/*/decrementarstock").hasAnyAuthority(Rol.ADMIN.name())
+
+                // Categorías: acceso a USER y ADMIN
+                .requestMatchers("/categories/**").hasAnyAuthority(Rol.USER.name(), Rol.ADMIN.name())
+      
                                                 .anyRequest()
                                                 .authenticated())
                                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
