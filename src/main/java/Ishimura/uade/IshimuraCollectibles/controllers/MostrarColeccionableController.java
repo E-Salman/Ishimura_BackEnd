@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
-@RequestMapping("mostrarAtributos")
+@RequestMapping("/coleccionable")
 public class MostrarColeccionableController {
 
     @Autowired

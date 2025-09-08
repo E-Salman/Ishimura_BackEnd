@@ -31,7 +31,7 @@ public class SecurityConfig {
                                 .csrf(AbstractHttpConfigurer::disable)
                                 .authorizeHttpRequests(req -> req.requestMatchers("/api/v1/auth/**").permitAll()
                                                 .requestMatchers("/error/**").permitAll()
-                                                .requestMatchers("/mostrarAtributos/**").permitAll()
+                                                .requestMatchers("/coleccionable/**").permitAll()
                                                 .requestMatchers("/lineas/**").permitAll()
                                                 .requestMatchers("/marcas/**").permitAll()
                                                 .requestMatchers("/categories/**")
