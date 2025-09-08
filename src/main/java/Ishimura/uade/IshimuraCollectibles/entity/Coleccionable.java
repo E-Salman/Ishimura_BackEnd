@@ -23,4 +23,9 @@ public class Coleccionable {
     @OneToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
+
+    // Relación con Linea
+    @ManyToOne
+    @JoinColumn(name = "linea_id", referencedColumnName = "id")
+    private Linea linea;
 }
