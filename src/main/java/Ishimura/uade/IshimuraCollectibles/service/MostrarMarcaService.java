@@ -5,4 +5,5 @@ import java.util.List;
 
 public interface MostrarMarcaService {
     List<MostrarMarcaDTO> listarMarcas();
+    MostrarMarcaDTO crearMarca(MostrarMarcaDTO dto); 
 }
