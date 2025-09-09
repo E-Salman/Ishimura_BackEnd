@@ -17,7 +17,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Data
 @Entity
 @NoArgsConstructor
-@NoArgsConstructor
 @AllArgsConstructor
 public class Coleccionable {
 
