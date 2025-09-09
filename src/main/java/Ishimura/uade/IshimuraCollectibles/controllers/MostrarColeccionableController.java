@@ -27,13 +27,4 @@ public class MostrarColeccionableController {
         return mostrarAtributosService.mostrarAtributos(coleccionableID);
     }
 
-    // Cree el post pero entiendo no lo necesita ya que no debo intentar de crear
-    // nada, solo pido listado de atributos
-    // @PostMapping("path")
-    // public String postMethodName(@RequestBody String entity) {
-    // TODO: process POST request
-
-    // return entity;
-    // }
-
 }

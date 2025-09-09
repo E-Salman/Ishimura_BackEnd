@@ -17,6 +17,6 @@ public class MostrarColeccionableDetalleServiceImpl implements MostrarColecciona
     public ColeccionableNombreDTO detallePorNombre(String nombre) {
         Coleccionable c = repo.findFirstByNombreIgnoreCase(nombre)
                 .orElseThrow();
-        return new ColeccionableNombreDTO(c.getId(), c.getDescription(), c.getIdImagen());
+        return new ColeccionableNombreDTO(c.getId(), c.getDescription()/* , c.getIdImagen() */);
     }
 }
