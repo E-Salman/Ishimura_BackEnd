@@ -16,9 +16,12 @@ public class Linea {
     @Column
     private String nombre;
 
-    @OneToMany
-    @JoinColumn(name = "linea_id", insertable = false, updatable = false)
+    @OneToMany(mappedBy = "linea")
     private List<Coleccionable> lineaColeccionables;
 
-    
+    // Relación con Marca
+    @ManyToOne
+    @JoinColumn(name = "marca_id", referencedColumnName = "id")
+    private Marca marca;
+
 }

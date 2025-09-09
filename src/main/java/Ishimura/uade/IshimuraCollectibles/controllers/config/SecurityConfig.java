@@ -18,35 +18,36 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthFilter;
-    private final AuthenticationProvider authenticationProvider;
+        private final JwtAuthenticationFilter jwtAuthFilter;
+        private final AuthenticationProvider authenticationProvider;
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(req -> req
-        
-                .requestMatchers("/api/v1/auth/**").permitAll()
-                .requestMatchers("/error/**").permitAll()
-
-                // listar el catalogo y poder filtrar por coleccionable 
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+                http
+                                .csrf(AbstractHttpConfigurer::disable)
+                                .authorizeHttpRequests(req -> req.requestMatchers("/api/v1/auth/**").permitAll()
+                                                .requestMatchers("/error/**").permitAll()
+                                                .requestMatchers("/categories/**").hasAnyAuthority(Rol.USER.name(), Rol.ADMIN.name())
+                                                .requestMatchers("/imagenes/**").permitAll()
+                                                .requestMatchers("/coleccionable/**").permitAll()
+                                                .requestMatchers("/lineas/**").permitAll()
+                                                .requestMatchers("/marcas/**").permitAll()
+                                                       
+                 // listar el catalogo y poder filtrar por coleccionable 
                 .requestMatchers("/catalogo", "/catalogo/*").hasAnyAuthority(Rol.USER.name(), Rol.ADMIN.name())
 
                 //operaciones de stock
-                .requestMatchers("/catalogo/*/incrementarstock", "/catalogo/*/decrementarstock")
-                    .hasAnyAuthority(Rol.ADMIN.name())
+                .requestMatchers("/catalogo/*/incrementarstock", "/catalogo/*/decrementarstock").hasAnyAuthority(Rol.ADMIN.name())
 
                 // Categorías: acceso a USER y ADMIN
                 .requestMatchers("/categories/**").hasAnyAuthority(Rol.USER.name(), Rol.ADMIN.name())
+      
+                                                .anyRequest()
+                                                .authenticated())
+                                .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
+                                .authenticationProvider(authenticationProvider)
+                                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
-                // todo lo demás requiere estar autenticado
-                .anyRequest().authenticated()
-            )
-            .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
-            .authenticationProvider(authenticationProvider)
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
-    }
+                return http.build();
+        }
 }

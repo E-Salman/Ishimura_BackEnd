@@ -27,10 +27,9 @@ public class OrdenItem {
     @Column(nullable = false)
     private Integer cantidad;
 
-    // la tienda está en dólares, no hay precios con más de 7 digitos (5 (max 99.999) + 2 decimales)
     @Column(name = "precio_unitario", precision = 7, scale = 2, nullable = false)
     private BigDecimal precioUnitario;
 
-    @Column(precision = 7, scale = 2, nullable = false)
+    @Column(precision = 9, scale = 2, nullable = false)
     private BigDecimal subtotal;
 }
