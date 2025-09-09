@@ -4,10 +4,15 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.sql.Blob;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import Ishimura.uade.IshimuraCollectibles.entity.Coleccionable;
 
 @Data
 @Entity
@@ -21,4 +26,11 @@ public class Imagen {
     private long id;
 
     private Blob image;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "imagenes_id", nullable = false, foreignKey = @ForeignKey(name = "fk_imagenes_coleccionable"))
+    @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Coleccionable coleccionable;
 }

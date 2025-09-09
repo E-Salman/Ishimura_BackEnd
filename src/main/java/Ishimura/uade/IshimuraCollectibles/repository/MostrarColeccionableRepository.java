@@ -13,7 +13,7 @@ import Ishimura.uade.IshimuraCollectibles.entity.Coleccionable;
 @Repository
 public interface MostrarColeccionableRepository extends JpaRepository<Coleccionable, Long> {
 
-    @Query("select c from Marca m join m.lineas l join l.lineaColeccionables c where c.id = :id")
+    @Query("select c from Marca m join m.lineas l join l.coleccionables c where c.id = :id")
     List<Coleccionable> findDetalleById(Long id);
 
 }

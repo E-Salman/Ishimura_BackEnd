@@ -28,23 +28,39 @@ public class SecurityConfig {
                                 .csrf(AbstractHttpConfigurer::disable)
                                 .authorizeHttpRequests(req -> req.requestMatchers("/api/v1/auth/**").permitAll()
                                                 .requestMatchers("/error/**").permitAll()
-                                                .requestMatchers("/categories/**").hasAnyAuthority(Rol.USER.name(), Rol.ADMIN.name())
+                                                .requestMatchers("/categories/**")
+                                                .hasAnyAuthority(Rol.USER.name(), Rol.ADMIN.name())
                                                 .requestMatchers("/imagenes/**").permitAll()
                                                 .requestMatchers("/coleccionable/**").permitAll()
                                                 .requestMatchers("/lineas/**").permitAll()
                                                 .requestMatchers("/marcas/**").permitAll()
-                                                       
-                
-                .requestMatchers("/catalogo", "/catalogo/*").hasAnyAuthority(Rol.USER.name(), Rol.ADMIN.name())
-                .requestMatchers(HttpMethod.POST, "/marcas/crear").hasAuthority(Rol.ADMIN.name())
-        
-                .requestMatchers("/catalogo/*/incrementarstock", "/catalogo/*/decrementarstock").hasAnyAuthority(Rol.ADMIN.name())
 
-                .requestMatchers("/categories/**").hasAnyAuthority(Rol.USER.name(), Rol.ADMIN.name())
+                                                .requestMatchers("/catalogo", "/catalogo/*")
+                                                .hasAnyAuthority(Rol.USER.name(), Rol.ADMIN.name())
+                                                .requestMatchers(HttpMethod.POST, "/marcas/crear")
+                                                .hasAuthority(Rol.ADMIN.name())
 
-                .requestMatchers("/usuarios/**").hasAuthority(Rol.ADMIN.name())
+                                                .requestMatchers("/catalogo/*/incrementarstock",
+                                                                "/catalogo/*/decrementarstock")
+                                                .hasAnyAuthority(Rol.ADMIN.name())
+                                                .requestMatchers("/mostrar/coleccionable/**").permitAll()
+                                                .requestMatchers("/listarColeLineas/**").permitAll()
+                                                // listar el catalogo y poder filtrar por coleccionable
+                                                .requestMatchers("/catalogo", "/catalogo/*")
+                                                .hasAnyAuthority(Rol.USER.name(), Rol.ADMIN.name())
 
-      
+                                                // operaciones de stock
+                                                .requestMatchers("/catalogo/*/incrementarstock",
+                                                                "/catalogo/*/decrementarstock")
+                                                .hasAnyAuthority(Rol.ADMIN.name())
+
+                                                .requestMatchers("/categories/**")
+                                                .hasAnyAuthority(Rol.USER.name(), Rol.ADMIN.name())
+
+                                                .requestMatchers("/usuarios/**").hasAuthority(Rol.ADMIN.name())
+                                                .requestMatchers("/mis-compras/**").hasAnyAuthority(Rol.USER.name())
+                                                .requestMatchers("/admin/compras/**").hasAnyAuthority(Rol.ADMIN.name())
+
                                                 .anyRequest()
                                                 .authenticated())
                                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))

@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import Ishimura.uade.IshimuraCollectibles.entity.Coleccionable;
 import Ishimura.uade.IshimuraCollectibles.entity.dto.MostrarColeccionableDTO;
 import Ishimura.uade.IshimuraCollectibles.service.MostrarColeccionableService;
-import Ishimura.uade.IshimuraCollectibles.service.MostrarColeccionableServiceImpl;
+import Ishimura.uade.IshimuraCollectibles.service.MostrarColeccionableNombreServiceImpl;
 
 import java.util.Map;
 
@@ -26,14 +26,5 @@ public class MostrarColeccionableController {
     public MostrarColeccionableDTO mostrarAtributosID(@PathVariable Long coleccionableID) {
         return mostrarAtributosService.mostrarAtributos(coleccionableID);
     }
-
-    // Cree el post pero entiendo no lo necesita ya que no debo intentar de crear
-    // nada, solo pido listado de atributos
-    // @PostMapping("path")
-    // public String postMethodName(@RequestBody String entity) {
-    // TODO: process POST request
-
-    // return entity;
-    // }
 
 }
