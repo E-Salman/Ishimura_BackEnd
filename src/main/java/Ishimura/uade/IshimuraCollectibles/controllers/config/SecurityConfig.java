@@ -33,7 +33,8 @@ public class SecurityConfig {
                                                 .requestMatchers("/coleccionable/**").permitAll()
                                                 .requestMatchers("/lineas/**").permitAll()
                                                 .requestMatchers("/marcas/**").permitAll()
-
+                                                .requestMatchers("/mostrar/coleccionable/**").permitAll()
+                                                .requestMatchers("/listarColeLineas/**").permitAll()
                                                 // listar el catalogo y poder filtrar por coleccionable
                                                 .requestMatchers("/catalogo", "/catalogo/*")
                                                 .hasAnyAuthority(Rol.USER.name(), Rol.ADMIN.name())
