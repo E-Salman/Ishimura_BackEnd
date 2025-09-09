@@ -2,6 +2,7 @@
 package Ishimura.uade.IshimuraCollectibles.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import Ishimura.uade.IshimuraCollectibles.entity.Rol;
@@ -12,20 +13,19 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class UsuarioService {
-
-    private final UserRepository userRepository;
+    private final UserRepository repo;
 
     public Usuario getByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("No existe usuario con email: " + email));
+        return repo.findByEmail(email).orElseThrow();
     }
 
     public List<Usuario> getByRol(Rol rol) {
-        return userRepository.findAllByRol(rol);
+        return repo.findByRol(rol);
     }
 
-    public Usuario getByOrdenId(Long ordenId) {
-        return userRepository.findByOrdenes_Id(ordenId)
-                .orElseThrow(() -> new IllegalArgumentException("No existe usuario para la orden: " + ordenId));
-    }
+public Optional<Usuario> getById(Long id) {
+    return repo.findById(id);
 }
+
+}
+

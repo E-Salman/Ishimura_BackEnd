@@ -1,9 +1,9 @@
 package Ishimura.uade.IshimuraCollectibles.entity;
 
 import java.util.List;
-
 import jakarta.persistence.*;
 import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Data
 @Entity
@@ -17,11 +17,10 @@ public class Linea {
     private String nombre;
 
     @OneToMany(mappedBy = "linea")
+    @JsonManagedReference("linea-coleccionables")
     private List<Coleccionable> lineaColeccionables;
 
-    // Relación con Marca
     @ManyToOne
     @JoinColumn(name = "marca_id", referencedColumnName = "id")
     private Marca marca;
-
 }

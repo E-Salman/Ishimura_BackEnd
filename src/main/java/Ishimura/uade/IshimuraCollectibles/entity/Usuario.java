@@ -81,4 +81,9 @@ public class Usuario implements UserDetails{
         return true;
     }
 
+    public Object map(Object object) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'map'");
+    }
+
 }

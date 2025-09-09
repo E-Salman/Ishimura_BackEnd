@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("usuarios")
+@RequestMapping("/usuarios")
 @RequiredArgsConstructor
 public class UsuarioController {
 
@@ -21,13 +21,15 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.getByEmail(email));
     }
 
-    @GetMapping("/by-rol") // @RequestParam porque el dato viene en la query
+    @GetMapping("/filtrarRol") // @RequestParam porque el dato viene en la query
     public ResponseEntity<List<Usuario>> getByRol(@RequestParam Rol rol) {
         return ResponseEntity.ok(usuarioService.getByRol(rol));
     }
 
-    @GetMapping("/by-orden/{ordenId}") //@pathvariable porque es parte de la ruta -> identificar 1 recurso en concreto
-    public ResponseEntity<Usuario> getByOrden(@PathVariable Long ordenId) {
-        return ResponseEntity.ok(usuarioService.getByOrdenId(ordenId));
-    }
+@GetMapping("/filtrarId/{id}")
+public ResponseEntity<Usuario> getById(@PathVariable Long id) {
+    return usuarioService.getById(id)
+            .map(ResponseEntity::ok)
+            .orElseGet(() -> ResponseEntity.notFound().build());
+}
 }
