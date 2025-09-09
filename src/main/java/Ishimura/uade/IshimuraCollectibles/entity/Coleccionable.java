@@ -1,5 +1,8 @@
 package Ishimura.uade.IshimuraCollectibles.entity;
 
+import java.util.List;
+
+import Ishimura.uade.IshimuraCollectibles.model.Imagen;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -28,4 +31,8 @@ public class Coleccionable {
     @ManyToOne
     @JoinColumn(name = "linea_id", referencedColumnName = "id")
     private Linea linea;
+
+    @OneToMany
+    @JoinColumn(name = "imagenes_id", referencedColumnName = "id")
+    private List<Imagen> imagenes;
 }
