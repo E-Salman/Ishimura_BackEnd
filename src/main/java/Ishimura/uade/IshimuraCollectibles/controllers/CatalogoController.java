@@ -1,6 +1,7 @@
 package Ishimura.uade.IshimuraCollectibles.controllers;
 
 import Ishimura.uade.IshimuraCollectibles.entity.Catalogo;
+import Ishimura.uade.IshimuraCollectibles.entity.dto.CatalogoDTO;
 import Ishimura.uade.IshimuraCollectibles.service.CatalogoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,23 +22,34 @@ public class CatalogoController {
         return ResponseEntity.ok(catalogoService.getAll());
     }
 
-    //obtener el coleccionable por id
-    @GetMapping("/{coleccionableId}")
+    // obtener el coleccionable por id */
+    /*@GetMapping("/{coleccionableId}")
     public ResponseEntity<Catalogo> getItem(@PathVariable Long coleccionableId) {
         return ResponseEntity.ok(catalogoService.stockProducto(coleccionableId));
+    }*/
+
+    @GetMapping("/{coleccionableId}")
+    public ResponseEntity<CatalogoDTO> getItem(@PathVariable Long coleccionableId) {
+        Catalogo catalogo = catalogoService.stockProducto(coleccionableId);
+
+        CatalogoDTO dto = new CatalogoDTO(
+            catalogo.getColeccionable().getId(),
+            catalogo.getStock()
+        );
+
+        return ResponseEntity.ok(dto);
     }
 
     // cambiar stock a un valor específico
-@PutMapping("/{coleccionableId}/cambiarstock")
-public ResponseEntity<Void> cambiarStock(
-        @PathVariable Long coleccionableId,
-        @RequestParam int nuevoStock) {
-    catalogoService.cambiarStock(coleccionableId, nuevoStock);
-    return ResponseEntity.ok().build();
-}
+    @PutMapping("/{coleccionableId}/cambiarstock")
+    public ResponseEntity<Void> cambiarStock(
+            @PathVariable Long coleccionableId,
+            @RequestParam int nuevoStock) {
+        catalogoService.cambiarStock(coleccionableId, nuevoStock);
+        return ResponseEntity.ok().build();
+    }
 
-
-    //incrementar el stock 
+    // incrementar el stock
     @PostMapping("/{coleccionableId}/incrementarstock")
     public ResponseEntity<Void> incrementarStock(
             @PathVariable Long coleccionableId,
@@ -46,7 +58,7 @@ public ResponseEntity<Void> cambiarStock(
         return ResponseEntity.ok().build();
     }
 
-    //decrementar el stock
+    // decrementar el stock
     @PostMapping("/{coleccionableId}/decrementarstock")
     public ResponseEntity<Void> decrementarStock(
             @PathVariable Long coleccionableId,

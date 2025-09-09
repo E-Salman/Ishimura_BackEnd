@@ -27,7 +27,7 @@ public class Imagen {
     private Blob image;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "coleccionable_id") //imagenes_id en realidad es el id de la tabla de coleccionables
+    @JoinColumn(name = "coleccionable_id") 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Coleccionable coleccionable;

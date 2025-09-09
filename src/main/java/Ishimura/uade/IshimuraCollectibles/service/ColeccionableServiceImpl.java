@@ -1,5 +1,6 @@
 package Ishimura.uade.IshimuraCollectibles.service;
 
+import Ishimura.uade.IshimuraCollectibles.entity.Catalogo;
 import Ishimura.uade.IshimuraCollectibles.entity.Category;
 import Ishimura.uade.IshimuraCollectibles.entity.Coleccionable;
 import Ishimura.uade.IshimuraCollectibles.entity.Linea;
@@ -7,6 +8,7 @@ import Ishimura.uade.IshimuraCollectibles.entity.dto.ColeccionableDTO;
 import Ishimura.uade.IshimuraCollectibles.entity.dto.MostrarColeccionableDTO;
 import Ishimura.uade.IshimuraCollectibles.exceptions.CategoryDuplicateException;
 import Ishimura.uade.IshimuraCollectibles.model.Imagen;
+import Ishimura.uade.IshimuraCollectibles.repository.CatalogoRepository;
 import Ishimura.uade.IshimuraCollectibles.repository.ImageRepository;
 import Ishimura.uade.IshimuraCollectibles.repository.MostrarColeccionableRepository;
 import Ishimura.uade.IshimuraCollectibles.repository.MostrarLineaRepository;
@@ -22,6 +24,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class ColeccionableServiceImpl implements ColeccionableService {
+
+        @Autowired
+        private CatalogoRepository catalogoRepository;
 
         @Autowired
         private MostrarLineaRepository lineaRepository;
@@ -62,6 +67,12 @@ public class ColeccionableServiceImpl implements ColeccionableService {
                 coleccionable.setImagenes(imagenes);
                 Linea tempLinea = lineaRepository.findById(coleccionableDTO.getLinea()).orElseThrow(() -> new jakarta.persistence.EntityNotFoundException("Linea " + coleccionableDTO.getLinea() + " no existe"));
                 coleccionable.setLinea(tempLinea);
-                return mostrarAtributosRepository.save(coleccionable);
+                Coleccionable saved = mostrarAtributosRepository.save(coleccionable);
+                Catalogo catalogo = new Catalogo();
+                catalogo.setColeccionable(saved);
+                catalogo.setStock(0);
+                catalogoRepository.save(catalogo);      
+
+                return saved;
         }
 }
