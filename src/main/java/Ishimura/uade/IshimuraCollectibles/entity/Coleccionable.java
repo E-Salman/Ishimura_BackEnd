@@ -5,6 +5,7 @@ import java.util.List;
 import Ishimura.uade.IshimuraCollectibles.model.Imagen;
 import jakarta.persistence.*;
 import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Data
 @Entity
@@ -27,9 +28,9 @@ public class Coleccionable {
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
 
-    // Relación con Linea
     @ManyToOne
     @JoinColumn(name = "linea_id", referencedColumnName = "id")
+    @JsonBackReference("linea-coleccionables")
     private Linea linea;
 
     @OneToMany

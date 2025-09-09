@@ -41,6 +41,9 @@ public class SecurityConfig {
 
                 // Categorías: acceso a USER y ADMIN
                 .requestMatchers("/categories/**").hasAnyAuthority(Rol.USER.name(), Rol.ADMIN.name())
+
+                .requestMatchers("/usuarios/**").hasAuthority(Rol.ADMIN.name())
+
       
                                                 .anyRequest()
                                                 .authenticated())
