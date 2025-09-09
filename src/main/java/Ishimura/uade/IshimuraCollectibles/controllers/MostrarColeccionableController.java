@@ -13,7 +13,7 @@ import Ishimura.uade.IshimuraCollectibles.model.Imagen;
 import Ishimura.uade.IshimuraCollectibles.service.ColeccionableService;
 import Ishimura.uade.IshimuraCollectibles.service.ImageService;
 import Ishimura.uade.IshimuraCollectibles.service.MostrarColeccionableService;
-import Ishimura.uade.IshimuraCollectibles.service.MostrarColeccionableServiceImpl;
+import Ishimura.uade.IshimuraCollectibles.service.MostrarColeccionableNombreServiceImpl;
 
 import java.io.IOException;
 import java.net.URI;

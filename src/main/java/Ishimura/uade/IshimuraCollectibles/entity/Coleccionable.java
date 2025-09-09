@@ -5,6 +5,7 @@ import java.util.List;
 
 import Ishimura.uade.IshimuraCollectibles.model.Imagen;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Data
 @Entity
 @NoArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 public class Coleccionable {
 
     public Coleccionable(String nombre, String description, Double precio, Linea linea, List<Imagen> imagenes) {
@@ -40,13 +43,14 @@ public class Coleccionable {
     @Column
     private Double precio;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
 
-    @ManyToOne
-    @JoinColumn(name = "linea_id", referencedColumnName = "id")
-    @JsonBackReference("linea-coleccionables")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "linea_id", nullable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Linea linea;
 
     @OneToMany(mappedBy = "coleccionable", fetch = FetchType.LAZY)

@@ -1,6 +1,9 @@
 package Ishimura.uade.IshimuraCollectibles.entity.dto;
 
-public record ItemDTO(
-    Long coleccionableId,
-    Integer cantidad
-) {}
+import lombok.Data;
+
+@Data
+public class ItemDTO {
+  private Long coleccionableId;
+  private Integer cantidad;
+}

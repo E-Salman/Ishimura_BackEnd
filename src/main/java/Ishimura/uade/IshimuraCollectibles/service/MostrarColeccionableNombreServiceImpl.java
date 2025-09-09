@@ -17,7 +17,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class MostrarColeccionableServiceImpl implements MostrarColeccionableService {
+public class MostrarColeccionableNombreServiceImpl implements MostrarColeccionableService {
 
         @Autowired
         private MostrarColeccionableRepository mostrarAtributosRepository;

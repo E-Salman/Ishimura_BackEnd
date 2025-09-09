@@ -1,8 +1,12 @@
 package Ishimura.uade.IshimuraCollectibles.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Data
@@ -13,14 +17,17 @@ public class Linea {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private String nombre;
 
-    @OneToMany(mappedBy = "linea")
-    @JsonManagedReference("linea-coleccionables")
-    private List<Coleccionable> lineaColeccionables;
-
-    @ManyToOne
-    @JoinColumn(name = "marca_id", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "marca_id", nullable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Marca marca;
+
+    @OneToMany(mappedBy = "linea", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<Coleccionable> coleccionables = new ArrayList<>();
 }
