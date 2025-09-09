@@ -47,6 +47,15 @@ public class SecurityConfig {
                                                 .requestMatchers("/categories/**")
                                                 .hasAnyAuthority(Rol.USER.name(), Rol.ADMIN.name())
 
+<<<<<<< HEAD
+=======
+                // Categorías: acceso a USER y ADMIN
+                .requestMatchers("/categories/**").hasAnyAuthority(Rol.USER.name(), Rol.ADMIN.name())
+
+                .requestMatchers("/usuarios/**").hasAuthority(Rol.ADMIN.name())
+
+      
+>>>>>>> ed97daa7b26a8a74129db5297363f3bb2b9a5ffb
                                                 .anyRequest()
                                                 .authenticated())
                                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
