@@ -1,11 +1,14 @@
 package Ishimura.uade.IshimuraCollectibles.controllers;
 
+import Ishimura.uade.IshimuraCollectibles.entity.dto.CLineaDTO;
 import Ishimura.uade.IshimuraCollectibles.entity.dto.MostrarLineaDTO;
 import Ishimura.uade.IshimuraCollectibles.service.MostrarLineaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
 
 @RestController
@@ -17,5 +20,10 @@ public class MostrarLineaController {
     @GetMapping
     public List<MostrarLineaDTO> listarLineas() {
         return mostrarLineaService.listarLineas();
+    }
+
+    @PostMapping("/crear")
+    public MostrarLineaDTO crearLinea(@RequestBody CLineaDTO lineaDTO) {
+        return mostrarLineaService.crearLinea(lineaDTO);
     }
 }
