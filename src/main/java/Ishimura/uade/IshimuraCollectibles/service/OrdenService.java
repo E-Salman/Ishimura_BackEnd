@@ -4,6 +4,8 @@ import Ishimura.uade.IshimuraCollectibles.entity.dto.CrearOrdenDTO;
 import Ishimura.uade.IshimuraCollectibles.entity.dto.OrdenDetalleDTO;
 import Ishimura.uade.IshimuraCollectibles.entity.dto.OrdenResumenDTO;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface OrdenService {

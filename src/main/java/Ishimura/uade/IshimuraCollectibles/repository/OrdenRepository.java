@@ -2,6 +2,7 @@ package Ishimura.uade.IshimuraCollectibles.repository;
 
 import Ishimura.uade.IshimuraCollectibles.entity.Orden;
 import org.springframework.data.jpa.repository.*;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;

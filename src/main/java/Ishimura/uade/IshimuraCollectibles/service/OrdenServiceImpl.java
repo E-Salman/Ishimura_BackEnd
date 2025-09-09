@@ -19,7 +19,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Collectors;
 
 @Service
 public class OrdenServiceImpl implements OrdenService {
@@ -28,6 +27,14 @@ public class OrdenServiceImpl implements OrdenService {
   private final UserRepository userRepository; // ya existe
   private final MostrarColeccionableRepository coleccionableRepository; // ya existe (también sirve para findById)
 
+  public OrdenServiceImpl(
+      OrdenRepository ordenRepository,
+      UserRepository userRepository,
+      MostrarColeccionableRepository coleccionableRepository) {
+    this.ordenRepository = ordenRepository;
+    this.userRepository = userRepository;
+    this.coleccionableRepository = coleccionableRepository;
+  }
   // =================== Obligatorios ===================
 
   @Override
@@ -189,7 +196,7 @@ public class OrdenServiceImpl implements OrdenService {
 
   private OrdenDetalleDTO toOrdenDetalleDTOUser(Orden o) {
     var items = o.getArticulos().stream().map(this::toItemDTO).toList();
-    var totalCalc = items.stream().map(OrdenItemDTO::subtotal)
+    var totalCalc = items.stream().map(OrdenItemDTO::getSubtotal)
         .reduce(BigDecimal.ZERO, BigDecimal::add);
     var total = (o.getMontoTotal() != null) ? o.getMontoTotal() : totalCalc;
 
