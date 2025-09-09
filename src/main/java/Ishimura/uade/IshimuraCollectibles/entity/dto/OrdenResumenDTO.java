@@ -1,10 +1,12 @@
 package Ishimura.uade.IshimuraCollectibles.entity.dto;
 
+import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public record OrdenResumenDTO(
-    String numeroOrden,
-    BigDecimal montoTotal,
-    LocalDateTime creadaEn
-) {}
+@Data
+public class OrdenResumenDTO {
+  private String numeroOrden;
+  private BigDecimal montoTotal;
+  private LocalDateTime creadaEn;
+}
