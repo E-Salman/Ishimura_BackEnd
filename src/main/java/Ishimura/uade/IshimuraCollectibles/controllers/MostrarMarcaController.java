@@ -3,7 +3,10 @@ package Ishimura.uade.IshimuraCollectibles.controllers;
 import Ishimura.uade.IshimuraCollectibles.entity.dto.MostrarMarcaDTO;
 import Ishimura.uade.IshimuraCollectibles.service.MostrarMarcaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
@@ -17,5 +20,10 @@ public class MostrarMarcaController {
     @GetMapping
     public List<MostrarMarcaDTO> listarMarcas() {
         return mostrarMarcaService.listarMarcas();
+    }
+    @PostMapping("/crear")
+    public ResponseEntity<MostrarMarcaDTO> crearMarca(@RequestBody MostrarMarcaDTO dto) {
+        MostrarMarcaDTO nuevaMarca = mostrarMarcaService.crearMarca(dto);
+        return ResponseEntity.ok(nuevaMarca);
     }
 }

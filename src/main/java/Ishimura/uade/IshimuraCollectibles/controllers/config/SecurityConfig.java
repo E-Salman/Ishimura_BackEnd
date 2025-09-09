@@ -4,6 +4,7 @@ import Ishimura.uade.IshimuraCollectibles.entity.Rol;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -33,13 +34,12 @@ public class SecurityConfig {
                                                 .requestMatchers("/lineas/**").permitAll()
                                                 .requestMatchers("/marcas/**").permitAll()
                                                        
-                 // listar el catalogo y poder filtrar por coleccionable 
+                
                 .requestMatchers("/catalogo", "/catalogo/*").hasAnyAuthority(Rol.USER.name(), Rol.ADMIN.name())
-
-                //operaciones de stock
+                .requestMatchers(HttpMethod.POST, "/marcas/crear").hasAuthority(Rol.ADMIN.name())
+        
                 .requestMatchers("/catalogo/*/incrementarstock", "/catalogo/*/decrementarstock").hasAnyAuthority(Rol.ADMIN.name())
 
-                // Categorías: acceso a USER y ADMIN
                 .requestMatchers("/categories/**").hasAnyAuthority(Rol.USER.name(), Rol.ADMIN.name())
 
                 .requestMatchers("/usuarios/**").hasAuthority(Rol.ADMIN.name())
