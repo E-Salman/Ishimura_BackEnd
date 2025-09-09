@@ -33,18 +33,20 @@ public class ImagesController {
         byte[] imageBytes = image.getImage().getBytes(1, (int) image.getImage().length());
 
         return ResponseEntity.ok()
-                .header("Content-Type", "image/png") // change to "image/jpeg" if it's a JPEG
+                .header("Content-Type", "image/png")
                 .body(imageBytes);
     }
+
     @PostMapping()
-    public String addImagePost(@ModelAttribute AddFileRequest request) throws IOException, SerialException, SQLException {
+    public String addImagePost(@ModelAttribute AddFileRequest request)
+            throws IOException, SerialException, SQLException {
         if (request.getFile() == null || request.getFile().isEmpty()) {
             return "Archivo vacío";
         }
         byte[] bytes = request.getFile().getBytes();
         Blob blob = new javax.sql.rowset.serial.SerialBlob(bytes);
-        imageService.create(Imagen.builder().image(blob).build());
-        return "created";
+        imageService.create(Imagen.builder().image(blob).build(), request.getIdColeccionable());
+        return "Creado";
     }
-    
+
 }
