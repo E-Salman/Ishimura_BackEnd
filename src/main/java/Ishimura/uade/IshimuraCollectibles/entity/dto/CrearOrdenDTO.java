@@ -1,9 +1,11 @@
 package Ishimura.uade.IshimuraCollectibles.entity.dto;
 
+import lombok.Data;
 import java.util.List;
 
-public record CrearOrdenDTO(
-    String metodoPago,
-    List<ItemDTO> items
-) {}
+@Data
+public class CrearOrdenDTO {
+  private String metodoPago;
+  private List<ItemDTO> items;
+}
 

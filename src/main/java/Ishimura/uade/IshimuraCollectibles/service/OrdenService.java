@@ -1,12 +1,14 @@
 package Ishimura.uade.IshimuraCollectibles.service;
 
-import Ishimura.uade.IshimuraCollectibles.entity.dto.*;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import Ishimura.uade.IshimuraCollectibles.entity.dto.CrearOrdenDTO;
+import Ishimura.uade.IshimuraCollectibles.entity.dto.OrdenDetalleDTO;
+import Ishimura.uade.IshimuraCollectibles.entity.dto.OrdenResumenDTO;
+
 import java.util.List;
 
 public interface OrdenService {
 
+  // nueva orden de compra
   OrdenDetalleDTO crearOrden(Long usuarioId, CrearOrdenDTO dto);
 
   List<OrdenResumenDTO> listarResumenMias(Long usuarioId);

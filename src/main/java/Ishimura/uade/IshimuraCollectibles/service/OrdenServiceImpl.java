@@ -1,10 +1,17 @@
 package Ishimura.uade.IshimuraCollectibles.service;
 
-import Ishimura.uade.IshimuraCollectibles.entity.*;
-import Ishimura.uade.IshimuraCollectibles.entity.dto.*;
-import Ishimura.uade.IshimuraCollectibles.repository.*;
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
+import Ishimura.uade.IshimuraCollectibles.entity.Orden;
+import Ishimura.uade.IshimuraCollectibles.entity.OrdenItem;
+import Ishimura.uade.IshimuraCollectibles.entity.Usuario;
+import Ishimura.uade.IshimuraCollectibles.entity.dto.CrearOrdenDTO;
+import Ishimura.uade.IshimuraCollectibles.entity.dto.ItemDTO;
+import Ishimura.uade.IshimuraCollectibles.entity.dto.OrdenDetalleDTO;
+import Ishimura.uade.IshimuraCollectibles.entity.dto.OrdenItemDTO;
+import Ishimura.uade.IshimuraCollectibles.entity.dto.OrdenResumenDTO;
+import Ishimura.uade.IshimuraCollectibles.repository.MostrarColeccionableRepository;
+import Ishimura.uade.IshimuraCollectibles.repository.OrdenRepository;
+import Ishimura.uade.IshimuraCollectibles.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -12,9 +19,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class OrdenServiceImpl implements OrdenService {
 
   private final OrdenRepository ordenRepository;
@@ -24,56 +31,62 @@ public class OrdenServiceImpl implements OrdenService {
   // =================== Obligatorios ===================
 
   @Override
-  @Transactional
   public OrdenDetalleDTO crearOrden(Long usuarioId, CrearOrdenDTO dto) {
-    var usuario = userRepository.findById(usuarioId)
+    Usuario usuario = userRepository.findById(usuarioId)
         .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
 
-    var orden = new Orden();
+    Orden orden = new Orden();
     orden.setNumeroOrden(generarNumeroOrden());
     orden.setUsuario(usuario);
-    orden.setMetodoPago(dto.metodoPago());
+    orden.setMetodoPago(dto.getMetodoPago());
     orden.setCreadaEn(LocalDateTime.now());
     orden.setMontoTotal(BigDecimal.ZERO);
 
-    // construir items desde los ItemDTO
-    for (ItemDTO i : dto.items()) {
-      var col = coleccionableRepository.findById(i.coleccionableId())
-          .orElseThrow(() -> new IllegalArgumentException("Coleccionable no encontrado: " + i.coleccionableId()));
+    // construir items (precioUnitario/subtotal quedan guardados en OrdenItem)
+    for (ItemDTO i : dto.getItems()) {
+      var col = coleccionableRepository.findById(i.getColeccionableId())
+          .orElseThrow(() -> new IllegalArgumentException("Coleccionable no encontrado: " + i.getColeccionableId()));
 
-      var precioUnit = BigDecimal.valueOf(col.getPrecio()); // si luego migran a BigDecimal en Coleccionable, mejor
-      var subtotal = precioUnit.multiply(BigDecimal.valueOf(i.cantidad()));
+      BigDecimal precioUnit = BigDecimal.valueOf(col.getPrecio());
+      BigDecimal subtotal = precioUnit.multiply(BigDecimal.valueOf(i.getCantidad()));
 
-      var item = new OrdenItem();
+      OrdenItem item = new OrdenItem();
       item.setOrden(orden);
       item.setColeccionable(col);
-      item.setCantidad(i.cantidad());
+      item.setCantidad(i.getCantidad());
       item.setPrecioUnitario(precioUnit);
       item.setSubtotal(subtotal);
 
-      orden.getArticulos().add(item); // en tu entity el campo se llama 'articulos'
+      orden.getArticulos().add(item);
     }
 
-    // total
-    var total = orden.getArticulos().stream()
+    // calcular total
+    BigDecimal total = orden.getArticulos().stream()
         .map(OrdenItem::getSubtotal)
         .reduce(BigDecimal.ZERO, BigDecimal::add);
     orden.setMontoTotal(total);
 
-    var guardada = ordenRepository.save(orden); // cascade guarda items
+    Orden guardada = ordenRepository.save(orden);
     return toDetalleDTO(guardada);
   }
 
   @Override
   public List<OrdenResumenDTO> listarResumenMias(Long usuarioId) {
     return ordenRepository.findAllByUsuario_Id(usuarioId).stream()
-        .map(o -> new OrdenResumenDTO(o.getNumeroOrden(), o.getMontoTotal(), o.getCreadaEn()))
-        .toList();
+        .map(o -> {
+          OrdenResumenDTO out = new OrdenResumenDTO();
+          out.setNumeroOrden(o.getNumeroOrden());
+          out.setMontoTotal(o.getMontoTotal());
+          out.setCreadaEn(o.getCreadaEn());
+          return out;
+        })
+        .collect(Collectors.toList());
   }
 
   @Override
   public List<OrdenResumenDTO> listarResumenDeUsuario(Long usuarioId) {
-    return listarResumenMias(usuarioId); // misma lógica; control de rol se hace en el controller
+    // misma logica- el control de rol ADMIN lo hace el Controller/Security
+    return listarResumenMias(usuarioId);
   }
 
   @Override
