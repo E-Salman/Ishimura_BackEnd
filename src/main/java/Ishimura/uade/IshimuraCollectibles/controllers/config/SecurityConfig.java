@@ -58,6 +58,8 @@ public class SecurityConfig {
                                                 .hasAnyAuthority(Rol.USER.name(), Rol.ADMIN.name())
 
                                                 .requestMatchers("/usuarios/**").hasAuthority(Rol.ADMIN.name())
+                                                .requestMatchers("/mis-compras/**").hasAnyAuthority(Rol.USER.name())
+                                                .requestMatchers("/admin/compras/**").hasAnyAuthority(Rol.ADMIN.name())
 
                                                 .anyRequest()
                                                 .authenticated())

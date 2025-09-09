@@ -1,5 +1,8 @@
 package Ishimura.uade.IshimuraCollectibles.entity.dto;
 
+import java.util.List;
+
+import Ishimura.uade.IshimuraCollectibles.model.Imagen;
 import lombok.*;
 
 @Data
@@ -8,5 +11,5 @@ import lombok.*;
 public class ColeccionableNombreDTO {
     private Long id;
     private String descripcion;
-    // private int idImg;
+    private List<Imagen> idImg;
 }

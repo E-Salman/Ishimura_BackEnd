@@ -12,13 +12,13 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ImageRepository extends JpaRepository<Imagen, Long> {
-    List<Imagen> findByColeccionableIdOrderByOrdenAscIdAsc(Long coleccionableId);
+    List<Imagen> findByColeccionableIdOrderByIdAsc(Long coleccionableId);
 
     @Query("""
                select i.id
                from Imagen i
                where i.coleccionable.id = :coleId
-               order by coalesce(i.orden, 999999), i.id
+               order by i.id
             """)
     Optional<Long> findTopIdByColeccionableId(@Param("coleId") Long coleId);
 }

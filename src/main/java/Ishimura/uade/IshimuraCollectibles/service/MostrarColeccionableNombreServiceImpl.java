@@ -36,7 +36,7 @@ public class MostrarColeccionableNombreServiceImpl implements MostrarColeccionab
                                 col.getNombre(),
                                 col.getDescription(),
                                 col.getPrecio(),
-                                // col.getIdImagen(),
+                                col.getImagenes(),
                                 lineaId,
                                 nombreLinea,
                                 marcaId,

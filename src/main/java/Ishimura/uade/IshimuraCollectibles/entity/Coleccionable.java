@@ -5,15 +5,28 @@ import java.util.List;
 
 import Ishimura.uade.IshimuraCollectibles.model.Imagen;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class Coleccionable {
+
+    public Coleccionable(String nombre, String description, Double precio, Linea linea, List<Imagen> imagenes) {
+        this.nombre = nombre;
+        this.description = description;
+        this.precio = precio;
+        this.linea = linea;
+        this.imagenes = imagenes;
+
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +41,7 @@ public class Coleccionable {
     @Column
     private Double precio;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
 

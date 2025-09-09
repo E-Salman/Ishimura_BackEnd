@@ -11,13 +11,14 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class OrdenServiceImpl implements OrdenService {
 
   private final OrdenRepository ordenRepository;
-  private final UserRepository userRepository;                          // ya existe
+  private final UserRepository userRepository; // ya existe
   private final MostrarColeccionableRepository coleccionableRepository; // ya existe (también sirve para findById)
 
   // =================== Obligatorios ===================
@@ -82,6 +83,24 @@ public class OrdenServiceImpl implements OrdenService {
     return toDetalleDTO(orden);
   }
 
+  @Override
+  public List<OrdenDetalleDTO> listarMisOrdenesDetalle(Long usuarioId) {
+    return ordenRepository.findAllByUsuarioIdDetailed(usuarioId)
+        .stream().map(this::toOrdenDetalleDTOUser).toList();
+  }
+
+  @Override
+  public List<OrdenDetalleDTO> listarTodasOrdenesDetalle() {
+    return ordenRepository.findAllDetailed()
+        .stream().map(this::toOrdenDetalleDTOAdmin).toList();
+  }
+
+  @Override
+  public List<OrdenDetalleDTO> listarOrdenesDetallePorUsuario(Long usuarioId) {
+    return ordenRepository.findAllByUsuarioIdDetailedAdmin(usuarioId)
+        .stream().map(this::toOrdenDetalleDTOAdmin).toList();
+  }
+
   // =================== Menor prioridad ===================
 
   @Override
@@ -136,26 +155,66 @@ public class OrdenServiceImpl implements OrdenService {
   // =================== helpers ===================
 
   private OrdenDetalleDTO toDetalleDTO(Orden o) {
-    var items = o.getArticulos().stream().map(it ->
-        new OrdenItemDTO(
-            it.getColeccionable().getId(),
-            it.getColeccionable().getNombre(),
-            it.getCantidad(),
-            it.getPrecioUnitario(),
-            it.getSubtotal()
-        )
-    ).toList();
+    var items = o.getArticulos().stream().map(it -> new OrdenItemDTO(
+        it.getColeccionable().getId(),
+        it.getColeccionable().getNombre(),
+        it.getCantidad(),
+        it.getPrecioUnitario(),
+        it.getSubtotal())).toList();
 
     return new OrdenDetalleDTO(
         o.getNumeroOrden(),
         o.getMontoTotal(),
         o.getMetodoPago(),
         o.getCreadaEn(),
-        items
-    );
+        items);
   }
 
   private String generarNumeroOrden() {
     return UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+  }
+
+  private OrdenDetalleDTO toOrdenDetalleDTOUser(Orden o) {
+    var items = o.getArticulos().stream().map(this::toItemDTO).toList();
+    var totalCalc = items.stream().map(OrdenItemDTO::subtotal)
+        .reduce(BigDecimal.ZERO, BigDecimal::add);
+    var total = (o.getMontoTotal() != null) ? o.getMontoTotal() : totalCalc;
+
+    return new OrdenDetalleDTO(
+        o.getNumeroOrden(),
+        total,
+        o.getMetodoPago(),
+        o.getCreadaEn(),
+        items);
+  }
+
+  private OrdenDetalleDTO toOrdenDetalleDTOAdmin(Orden o) {
+    // mismo cuerpo que USER; si quisieras agregar info de usuario,
+    // se podría extender el DTO, pero me pediste usar el tuyo actual.
+    return toOrdenDetalleDTOUser(o);
+  }
+
+  private OrdenItemDTO toItemDTO(OrdenItem it) {
+    var c = it.getColeccionable();
+    var subtotal = it.getPrecioUnitario().multiply(BigDecimal.valueOf(it.getCantidad()));
+    return new OrdenItemDTO(
+        c.getId(),
+        c.getNombre(),
+        it.getCantidad(),
+        it.getPrecioUnitario(),
+        subtotal);
+  }
+
+  private OrdenResumenDTO toOrdenResumenDTO(Orden o) {
+    var total = (o.getMontoTotal() != null)
+        ? o.getMontoTotal()
+        : o.getArticulos().stream()
+            .map(i -> i.getPrecioUnitario().multiply(BigDecimal.valueOf(i.getCantidad())))
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+    return new OrdenResumenDTO(
+        o.getNumeroOrden(),
+        total,
+        o.getCreadaEn());
   }
 }

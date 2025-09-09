@@ -1,5 +1,8 @@
 package Ishimura.uade.IshimuraCollectibles.entity.dto;
 
+import java.util.List;
+
+import Ishimura.uade.IshimuraCollectibles.model.Imagen;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +16,7 @@ public class MostrarColeccionableDTO {
     private String nombre;
     private String descripcion;
     private Double precio;
-    // private int idImagen; // preguntar como asociamos correctanmente la imagen, o
+    private List<Imagen> idImagen; // preguntar como asociamos correctanmente la imagen, o
     // si la subimos
     // directamente por insomnia
 
