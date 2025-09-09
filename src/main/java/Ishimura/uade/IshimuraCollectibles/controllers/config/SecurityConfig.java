@@ -39,6 +39,8 @@ public class SecurityConfig {
                                                 .hasAnyAuthority(Rol.USER.name(), Rol.ADMIN.name())
                                                 .requestMatchers(HttpMethod.POST, "/marcas/crear")
                                                 .hasAuthority(Rol.ADMIN.name())
+                                                // .requestMatchers(HttpMethod.POST, "/lineas/crear")
+                                                // .hasAuthority(Rol.ADMIN.name())
 
                                                 .requestMatchers("/catalogo/*/incrementarstock",
                                                                 "/catalogo/*/decrementarstock")
