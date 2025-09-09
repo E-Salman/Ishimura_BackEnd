@@ -47,11 +47,6 @@ public class Usuario implements UserDetails{
     @OneToMany(mappedBy = "usuario")
     private List<Orden> ordenes;
 
-    /*@ManyToOne
-    @JoinTable(name = "tiene", 
-        joinColumns = @JoinColumn(name = "usuario_id"), 
-        inverseJoinColumns = @JoinColumn(name = "rol_id"))
-    private Rol usuarioRol;*/
 
     @Enumerated(EnumType.STRING)
     private Rol rol;
