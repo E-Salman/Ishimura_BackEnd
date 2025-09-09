@@ -19,7 +19,7 @@ import java.util.List;
 public class OrdenController {
 
   private final OrdenService ordenService;
-  private final UserRepository userRepository; // para resolver el id del usuario autenticado por email
+  private final UserRepository userRepository; 
 
   // Crear nueva orden para el usuario autenticado
   @PostMapping
@@ -28,28 +28,26 @@ public class OrdenController {
     return ResponseEntity.ok(ordenService.crearOrden(usuarioId, dto));
   }
 
-  // Listar (resumen) mis órdenes: nro, monto, fecha
+  // listar (resumen) mis órdenes: nro, monto, fecha
   @GetMapping("/mias")
   public ResponseEntity<List<OrdenResumenDTO>> mias(Principal principal) {
     Long usuarioId = resolveUserId(principal);
     return ResponseEntity.ok(ordenService.listarResumenMias(usuarioId));
   }
 
-  // Listar (resumen) de un usuario dado (esto debería requerir rol ADMIN)
+  // listar (resumen) de un usuario dado (solo admin)
   @GetMapping("/usuario/{usuarioId}")
   public ResponseEntity<List<OrdenResumenDTO>> deUsuario(@PathVariable Long usuarioId) {
     return ResponseEntity.ok(ordenService.listarResumenDeUsuario(usuarioId));
   }
 
-  // Detalle por número de orden
+  // detalle por número de orden
   @GetMapping("/{numeroOrden}")
   public ResponseEntity<OrdenDetalleDTO> detalle(@PathVariable String numeroOrden) {
     return ResponseEntity.ok(ordenService.detallePorNumero(numeroOrden));
   }
 
-  // ----------------- helpers -----------------
   private Long resolveUserId(Principal principal) {
-    // En tu app el principal probablemente es el email -> lo buscamos y devolvemos el id
     String email = principal.getName();
     return userRepository.findByEmail(email)
         .map(Usuario::getId)
