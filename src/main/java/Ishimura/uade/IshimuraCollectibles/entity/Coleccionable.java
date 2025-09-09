@@ -48,6 +48,7 @@ public class Coleccionable {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "linea_id", nullable = false)
+    @JsonBackReference("linea-coleccionables")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Linea linea;

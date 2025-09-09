@@ -27,6 +27,7 @@ public class Linea {
     private Marca marca;
 
     @OneToMany(mappedBy = "linea", fetch = FetchType.LAZY)
+    @JsonManagedReference("linea-coleccionables")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private List<Coleccionable> coleccionables = new ArrayList<>();
