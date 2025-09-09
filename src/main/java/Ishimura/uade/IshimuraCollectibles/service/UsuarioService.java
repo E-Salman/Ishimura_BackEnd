@@ -23,9 +23,8 @@ public class UsuarioService {
         return repo.findByRol(rol);
     }
 
-public Optional<Usuario> getById(Long id) {
-    return repo.findById(id);
-}
+    public Optional<Usuario> getById(Long id) {
+        return repo.findById(id);
+    }
 
 }
-

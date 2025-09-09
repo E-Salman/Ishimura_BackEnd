@@ -14,7 +14,7 @@ import java.security.Principal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/ordenes")
+@RequestMapping("/ordenes")
 @RequiredArgsConstructor
 public class OrdenController {
 

@@ -20,4 +20,3 @@ public class Catalogo {
     @Column(nullable = false)
     private Integer stock;
 }
-

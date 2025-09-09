@@ -26,10 +26,10 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.getByRol(rol));
     }
 
-@GetMapping("/filtrarId/{id}")
-public ResponseEntity<Usuario> getById(@PathVariable Long id) {
-    return usuarioService.getById(id)
-            .map(ResponseEntity::ok)
-            .orElseGet(() -> ResponseEntity.notFound().build());
-}
+    @GetMapping("/filtrarId/{id}")
+    public ResponseEntity<Usuario> getById(@PathVariable Long id) {
+        return usuarioService.getById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 }

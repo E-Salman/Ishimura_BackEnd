@@ -35,7 +35,6 @@ public class OrdenServiceImpl implements OrdenService {
     this.userRepository = userRepository;
     this.coleccionableRepository = coleccionableRepository;
   }
-  // =================== Obligatorios ===================
 
   @Override
   public OrdenDetalleDTO crearOrden(Long usuarioId, CrearOrdenDTO dto) {
@@ -49,7 +48,6 @@ public class OrdenServiceImpl implements OrdenService {
     orden.setCreadaEn(LocalDateTime.now());
     orden.setMontoTotal(BigDecimal.ZERO);
 
-    // construir items (precioUnitario/subtotal quedan guardados en OrdenItem)
     for (ItemDTO i : dto.getItems()) {
       var col = coleccionableRepository.findById(i.getColeccionableId())
           .orElseThrow(() -> new IllegalArgumentException("Coleccionable no encontrado: " + i.getColeccionableId()));
@@ -67,7 +65,6 @@ public class OrdenServiceImpl implements OrdenService {
       orden.getArticulos().add(item);
     }
 
-    // calcular total
     BigDecimal total = orden.getArticulos().stream()
         .map(OrdenItem::getSubtotal)
         .reduce(BigDecimal.ZERO, BigDecimal::add);
