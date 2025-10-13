@@ -28,8 +28,8 @@ public class SecurityConfig {
                                 .csrf(AbstractHttpConfigurer::disable)
                                 .authorizeHttpRequests(req -> req.requestMatchers("/api/v1/auth/**").permitAll()
                                                 .requestMatchers("/error/**").permitAll()
-                                                .requestMatchers("/categories/**")
-                                                .hasAnyAuthority(Rol.USER.name(), Rol.ADMIN.name())
+                                                .requestMatchers(HttpMethod.GET, "/categories*").permitAll()
+                                                .requestMatchers(HttpMethod.POST, "/categories/*").hasAuthority(Rol.ADMIN.name())     
                                                 .requestMatchers("/imagenes/**").permitAll()
                                                 .requestMatchers("/coleccionable/**").permitAll()
                                                 .requestMatchers("/lineas/**").permitAll()
@@ -63,8 +63,7 @@ public class SecurityConfig {
                                                 .requestMatchers("/mis-compras/**").hasAnyAuthority(Rol.USER.name())
                                                 .requestMatchers("/admin/compras/**").hasAnyAuthority(Rol.ADMIN.name())
 
-                                                .anyRequest()
-                                                .authenticated())
+                                                .anyRequest().authenticated())
                                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                                 .authenticationProvider(authenticationProvider)
                                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
