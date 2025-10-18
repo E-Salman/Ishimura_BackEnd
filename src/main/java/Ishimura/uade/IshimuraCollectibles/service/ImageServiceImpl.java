@@ -8,6 +8,8 @@ import jakarta.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import Ishimura.uade.IshimuraCollectibles.exceptions.CollectibleNotFoundException;
+import Ishimura.uade.IshimuraCollectibles.exceptions.ImageNotFoundException;
 
 @Service
 public class ImageServiceImpl implements ImageService {
@@ -19,7 +21,8 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public Imagen create(Imagen image, Long idCol) {
-        Coleccionable coleccionable = coleccionableRepository.findById(idCol).orElseThrow(() -> new EntityNotFoundException("Coleccionable " + idCol + " no existe"));
+        Coleccionable coleccionable = coleccionableRepository.findById(idCol)
+            .orElseThrow(() -> new CollectibleNotFoundException(idCol));
 
         image.setColeccionable(coleccionable);
         return imageRepository.save(image);
@@ -27,6 +30,7 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public Imagen viewById(long id) {
-        return imageRepository.findById(id).get();
+        return imageRepository.findById(id)
+                .orElseThrow(() -> new ImageNotFoundException(id));
     }
 }

@@ -16,7 +16,7 @@ public class MostrarColeccionableDetalleServiceImpl implements MostrarColecciona
     @Override
     public ColeccionableNombreDTO detallePorNombre(String nombre) {
         Coleccionable c = repo.findFirstByNombreIgnoreCase(nombre)
-                .orElseThrow();
+                .orElseThrow(() -> new Ishimura.uade.IshimuraCollectibles.exceptions.CollectibleNotFoundException("nombre=" + nombre));
         return new ColeccionableNombreDTO(c.getId(), c.getDescription(), c.getImagenes());
     }
 }

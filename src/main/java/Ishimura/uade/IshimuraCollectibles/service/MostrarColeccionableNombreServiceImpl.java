@@ -25,7 +25,7 @@ public class MostrarColeccionableNombreServiceImpl implements MostrarColeccionab
         @Override
         public MostrarColeccionableDTO mostrarAtributos(@PathVariable Long id) {
                 Coleccionable col = mostrarAtributosRepository.findById(id)
-                                .orElseThrow(() -> new IllegalArgumentException("No existe coleccionable id=" + id));
+                                .orElseThrow(() -> new Ishimura.uade.IshimuraCollectibles.exceptions.CollectibleNotFoundException(id));
 
                 Long lineaId = col.getLinea() != null ? col.getLinea().getId() : null;
                 String nombreLinea = col.getLinea() != null ? col.getLinea().getNombre() : null;

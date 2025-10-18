@@ -46,7 +46,7 @@ public class CategoryController {
         if (result.isPresent())
             return ResponseEntity.ok(result.get());
 
-        return ResponseEntity.noContent().build();
+        throw new Ishimura.uade.IshimuraCollectibles.exceptions.CategoryNotFoundException(categoryId);
     }
 
     @PostMapping

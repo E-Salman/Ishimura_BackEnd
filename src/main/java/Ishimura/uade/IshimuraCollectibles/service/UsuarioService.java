@@ -16,7 +16,8 @@ public class UsuarioService {
     private final UserRepository repo;
 
     public Usuario getByEmail(String email) {
-        return repo.findByEmail(email).orElseThrow();
+        return repo.findByEmail(email)
+            .orElseThrow(() -> new Ishimura.uade.IshimuraCollectibles.exceptions.UserNotFoundException(email));
     }
 
     public List<Usuario> getByRol(Rol rol) {

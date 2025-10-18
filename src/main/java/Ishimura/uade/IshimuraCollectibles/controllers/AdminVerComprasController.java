@@ -25,7 +25,7 @@ public class AdminVerComprasController {
     // Compras filtradas por usuario
     @GetMapping("/{usuarioId}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public List<OrdenDetalleDTO> porUsuario(@RequestParam Long usuarioId) {
+    public List<OrdenDetalleDTO> porUsuario(@PathVariable Long usuarioId) {
         return ordenService.listarOrdenesDetallePorUsuario(usuarioId);
     }
 }
