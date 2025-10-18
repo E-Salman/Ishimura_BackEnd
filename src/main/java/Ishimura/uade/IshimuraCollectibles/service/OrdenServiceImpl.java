@@ -13,6 +13,9 @@ import Ishimura.uade.IshimuraCollectibles.repository.OrdenRepository;
 import Ishimura.uade.IshimuraCollectibles.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import Ishimura.uade.IshimuraCollectibles.exceptions.UserNotFoundException;
+import Ishimura.uade.IshimuraCollectibles.exceptions.CollectibleNotFoundException;
+import Ishimura.uade.IshimuraCollectibles.exceptions.OrderNotFoundException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -39,7 +42,7 @@ public class OrdenServiceImpl implements OrdenService {
   @Override
   public OrdenDetalleDTO crearOrden(Long usuarioId, CrearOrdenDTO dto) {
     Usuario usuario = userRepository.findById(usuarioId)
-        .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+        .orElseThrow(() -> new UserNotFoundException(usuarioId));
 
     Orden orden = new Orden();
     orden.setNumeroOrden(generarNumeroOrden());
@@ -50,7 +53,7 @@ public class OrdenServiceImpl implements OrdenService {
 
     for (ItemDTO i : dto.getItems()) {
       var col = coleccionableRepository.findById(i.getColeccionableId())
-          .orElseThrow(() -> new IllegalArgumentException("Coleccionable no encontrado: " + i.getColeccionableId()));
+          .orElseThrow(() -> new CollectibleNotFoundException(i.getColeccionableId()));
 
       BigDecimal precioUnit = BigDecimal.valueOf(col.getPrecio());
       BigDecimal subtotal = precioUnit.multiply(BigDecimal.valueOf(i.getCantidad()));
@@ -96,7 +99,7 @@ public class OrdenServiceImpl implements OrdenService {
   @Override
   public OrdenDetalleDTO detallePorNumero(String numeroOrden) {
     var orden = ordenRepository.findByNumeroOrden(numeroOrden)
-        .orElseThrow(() -> new IllegalArgumentException("Orden no encontrada"));
+        .orElseThrow(() -> new OrderNotFoundException(numeroOrden));
     return toDetalleDTO(orden);
   }
 

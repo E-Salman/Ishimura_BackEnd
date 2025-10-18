@@ -48,6 +48,9 @@ public class MostrarColeccionableController {
     @GetMapping("/{coleccionableID}/imagenes/{imagenID}")
     public ResponseEntity<byte[]> mostrarImagen(@PathVariable Long coleccionableID, @PathVariable int imagenID) throws SQLException, IOException {
         ColeccionableDTO coleccionable = coleccionableService.mostrarAtributos(coleccionableID);
+        if (imagenID < 0 || imagenID >= coleccionable.getImagenes().size()) {
+            throw new IllegalArgumentException("Índice de imagen inválido");
+        }
         Imagen imagen = imageService.viewById(coleccionable.getImagenes().get(imagenID));
         byte[] imageBytes = imagen.getImage().getBytes(1, (int) imagen.getImage().length());
         return ResponseEntity.ok()
