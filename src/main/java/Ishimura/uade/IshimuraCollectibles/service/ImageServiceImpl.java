@@ -20,7 +20,6 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public Imagen create(Imagen image, Long idCol) {
         Coleccionable coleccionable = coleccionableRepository.findById(idCol).orElseThrow(() -> new EntityNotFoundException("Coleccionable " + idCol + " no existe"));
-
         image.setColeccionable(coleccionable);
         return imageRepository.save(image);
     }
