@@ -24,7 +24,9 @@ public class ImageServiceImpl implements ImageService {
         Coleccionable coleccionable = coleccionableRepository.findById(idCol)
             .orElseThrow(() -> new CollectibleNotFoundException(idCol));
 
+        // asegurar exclusividad: setear coleccionable y limpiar marca
         image.setColeccionable(coleccionable);
+        image.setMarca(null);
         return imageRepository.save(image);
     }
 

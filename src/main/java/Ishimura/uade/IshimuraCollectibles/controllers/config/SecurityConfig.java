@@ -37,8 +37,10 @@ public class SecurityConfig {
                                                 .requestMatchers(HttpMethod.POST, "/lineas/**")
                                                 .hasAuthority(Rol.ADMIN.name())
                                                 .requestMatchers(HttpMethod.GET, "/marcas/**").permitAll()
-                                                .requestMatchers(HttpMethod.POST, "/marcas/**")
-                                                .hasAuthority(Rol.ADMIN.name())
+                                                .requestMatchers(HttpMethod.POST, "/marcas/**").hasAuthority(Rol.ADMIN.name())
+                                                // Imagenes de marcas (controlador MarcaImagesController)
+                                                .requestMatchers(HttpMethod.GET, "/marcasImages/**").permitAll()
+                                                .requestMatchers(HttpMethod.POST, "/marcasImages/**").hasAuthority(Rol.ADMIN.name())
 
                                                 .requestMatchers("/catalogo", "/catalogo/*")
                                                 .hasAnyAuthority(Rol.USER.name(), Rol.ADMIN.name())

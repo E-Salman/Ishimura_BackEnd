@@ -12,6 +12,9 @@ import Ishimura.uade.IshimuraCollectibles.repository.CatalogoRepository;
 import Ishimura.uade.IshimuraCollectibles.repository.ImageRepository;
 import Ishimura.uade.IshimuraCollectibles.repository.MostrarColeccionableRepository;
 import Ishimura.uade.IshimuraCollectibles.repository.MostrarLineaRepository;
+import Ishimura.uade.IshimuraCollectibles.exceptions.CollectibleNotFoundException;
+import Ishimura.uade.IshimuraCollectibles.exceptions.ImageNotFoundException;
+import Ishimura.uade.IshimuraCollectibles.exceptions.LineaNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +43,7 @@ public class ColeccionableServiceImpl implements ColeccionableService {
         @Override
         public ColeccionableDTO mostrarAtributos(@PathVariable Long id) {
                 Coleccionable col = mostrarAtributosRepository.findById(id)
-                                .orElseThrow(() -> new IllegalArgumentException("No existe coleccionable id=" + id));
+                                .orElseThrow(() -> new CollectibleNotFoundException(id));
 
                 List<Long> idImagenes = col.getImagenes().stream().map(Imagen::getId).collect(Collectors.toList());
 
@@ -61,11 +64,13 @@ public class ColeccionableServiceImpl implements ColeccionableService {
                 List<Imagen> imagenes = new LinkedList<>();
                 Imagen tempImg;
                 for (Long id : coleccionableDTO.getImagenes()) {
-                        tempImg = imageRepository.findById(id).orElseThrow(() -> new jakarta.persistence.EntityNotFoundException("Imagen " + id + " no existe"));
+                        tempImg = imageRepository.findById(id)
+                                   .orElseThrow(() -> new ImageNotFoundException(id));
                         imagenes.add(tempImg);
                 }
                 coleccionable.setImagenes(imagenes);
-                Linea tempLinea = lineaRepository.findById(coleccionableDTO.getLinea()).orElseThrow(() -> new jakarta.persistence.EntityNotFoundException("Linea " + coleccionableDTO.getLinea() + " no existe"));
+                Linea tempLinea = lineaRepository.findById(coleccionableDTO.getLinea())
+                                .orElseThrow(() -> new LineaNotFoundException(coleccionableDTO.getLinea()));
                 coleccionable.setLinea(tempLinea);
                 Coleccionable saved = mostrarAtributosRepository.save(coleccionable);
                 Catalogo catalogo = new Catalogo();
