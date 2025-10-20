@@ -5,6 +5,8 @@ import Ishimura.uade.IshimuraCollectibles.entity.dto.MostrarLineaDTO;
 import Ishimura.uade.IshimuraCollectibles.entity.dto.CLineaDTO;
 import Ishimura.uade.IshimuraCollectibles.entity.Marca;
 import Ishimura.uade.IshimuraCollectibles.repository.MostrarLineaRepository;
+import Ishimura.uade.IshimuraCollectibles.repository.MostrarMarcaRepository;
+import Ishimura.uade.IshimuraCollectibles.exceptions.MarcaNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -14,6 +16,8 @@ import java.util.stream.Collectors;
 public class MostrarLineaServiceImpl implements MostrarLineaService {
     @Autowired
     private MostrarLineaRepository mostrarLineaRepository;
+    @Autowired
+    private MostrarMarcaRepository mostrarMarcaRepository;
 
     @Override
     public List<MostrarLineaDTO> listarLineas() {
@@ -28,8 +32,9 @@ public class MostrarLineaServiceImpl implements MostrarLineaService {
         Linea linea = new Linea();
         linea.setNombre(cLineaDTO.getNombre());
         if (cLineaDTO.getIdMarca() != null) {
-            Marca marca = new Marca();
-            marca.setId(cLineaDTO.getIdMarca());
+            // Verificar que la marca exista, lanzar 404 si no
+            Marca marca = mostrarMarcaRepository.findById(cLineaDTO.getIdMarca())
+                    .orElseThrow(() -> new MarcaNotFoundException(cLineaDTO.getIdMarca()));
             linea.setMarca(marca);
         }
         Linea saved = mostrarLineaRepository.save(linea);

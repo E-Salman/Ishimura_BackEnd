@@ -6,6 +6,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import Ishimura.uade.IshimuraCollectibles.controllers.auth.AuthenticationRequest;
 import Ishimura.uade.IshimuraCollectibles.controllers.auth.AuthenticationResponse;
@@ -25,6 +26,11 @@ public class AuthenticationService {
         private final AuthenticationManager authenticationManager;
 
         public AuthenticationResponse register(RegisterRequest request) {
+                // 1) Validación de negocio: email único
+                repository.findByEmail(request.getEmail()).ifPresent(u -> {
+                        throw new Ishimura.uade.IshimuraCollectibles.exceptions.UserAlreadyExistsException(request.getEmail());
+                });
+
                 var usuario = Usuario.builder()
                                 .email(request.getEmail())
                                 .nombre(request.getNombre())
@@ -34,7 +40,12 @@ public class AuthenticationService {
                                 .rol(request.getRol())
                                 .build();
 
-                repository.save(usuario);
+                // 2) Persistencia con defensa por condición de carrera
+                try {
+                        repository.save(usuario);
+                } catch (DataIntegrityViolationException e) {
+                        throw new Ishimura.uade.IshimuraCollectibles.exceptions.UserAlreadyExistsException(request.getEmail());
+                }
                 var jwtToken = jwtService.generateToken(usuario);
                 return AuthenticationResponse.builder()
                                 .accessToken(jwtToken)
@@ -48,7 +59,7 @@ public class AuthenticationService {
                                                 request.getPassword()));
 
                 var user = repository.findByEmail(request.getEmail())
-                                .orElseThrow();
+                                .orElseThrow(() -> new Ishimura.uade.IshimuraCollectibles.exceptions.UserNotFoundException(request.getEmail()));
                 var jwtToken = jwtService.generateToken(user);
                 return AuthenticationResponse.builder()
                                 .accessToken(jwtToken)

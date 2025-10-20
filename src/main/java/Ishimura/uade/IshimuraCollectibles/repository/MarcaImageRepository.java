@@ -11,14 +11,14 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ImageRepository extends JpaRepository<Imagen, Long> {
-    List<Imagen> findByColeccionableIdOrderByIdAsc(Long coleccionableId);
+public interface MarcaImageRepository extends JpaRepository<Imagen, Long> {
+    List<Imagen> findByMarcaIdOrderByIdAsc(Long marcaId);
 
     @Query("""
             select i.id
             from Imagen i
-            where i.coleccionable.id = :coleId
+            where i.marca.id = :marcaId
             order by i.id
             """)
-    Optional<Long> findTopIdByColeccionableId(@Param("coleId") Long coleId);
+    Optional<Long> findTopIdByMarcaId(@Param("marcaId") Long marcaId);
 }

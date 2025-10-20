@@ -41,7 +41,7 @@ public class ImagesController {
     public String addImagePost(@ModelAttribute AddFileRequest request)
             throws IOException, SerialException, SQLException {
         if (request.getFile() == null || request.getFile().isEmpty()) {
-            return "Archivo vacío";
+            throw new IllegalArgumentException("Archivo vacio");
         }
         byte[] bytes = request.getFile().getBytes();
         Blob blob = new javax.sql.rowset.serial.SerialBlob(bytes);
@@ -50,3 +50,4 @@ public class ImagesController {
     }
 
 }
+

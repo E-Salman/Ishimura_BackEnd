@@ -46,7 +46,7 @@ public class CategoryController {
         if (result.isPresent())
             return ResponseEntity.ok(result.get());
 
-        return ResponseEntity.noContent().build();
+        throw new Ishimura.uade.IshimuraCollectibles.exceptions.CategoryNotFoundException(categoryId);
     }
 
     @PostMapping
@@ -54,5 +54,7 @@ public class CategoryController {
             throws CategoryDuplicateException {
         Category result = categoryService.createCategory(categoryRequest.getDescription());
         return ResponseEntity.created(URI.create("/categories/" + result.getId())).body(result);
+
     }
+
 }

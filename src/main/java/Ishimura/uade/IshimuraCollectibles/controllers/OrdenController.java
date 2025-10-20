@@ -19,7 +19,7 @@ import java.util.List;
 public class OrdenController {
 
   private final OrdenService ordenService;
-  private final UserRepository userRepository; 
+  private final UserRepository userRepository;
 
   // Crear nueva orden para el usuario autenticado
   @PostMapping
@@ -51,7 +51,6 @@ public class OrdenController {
     String email = principal.getName();
     return userRepository.findByEmail(email)
         .map(Usuario::getId)
-        .orElseThrow(() -> new IllegalArgumentException("Usuario autenticado no encontrado: " + email));
+        .orElseThrow(() -> new Ishimura.uade.IshimuraCollectibles.exceptions.UserNotFoundException(email));
   }
 }
-

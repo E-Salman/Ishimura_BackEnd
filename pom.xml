@@ -85,6 +85,14 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+		<!-- ImageIO plugin (WebP and others) -->
+		<dependency>
+			<groupId>com.twelvemonkeys.imageio</groupId>
+			<artifactId>imageio-webp</artifactId>
+			<version>3.11.0</version>
+		</dependency>
+
+		<!-- Database migrations -->
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -102,6 +110,21 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>jakarta.validation</groupId>
+			<artifactId>jakarta.validation-api</artifactId>
+			<version>3.1.0</version>
+		</dependency>
+		<dependency>
+    <groupId>org.hibernate.validator</groupId>
+    <artifactId>hibernate-validator</artifactId>
+    <version>8.0.1.Final</version> <!-- Use the latest stable version compatible with your Jakarta Validation API -->
+</dependency>
+<dependency>
+    <groupId>org.glassfish</groupId>
+    <artifactId>jakarta.el</artifactId>
+    <version>4.0.2</version> <!-- Use the latest stable version -->
+</dependency>
 	</dependencies>
 
 	<build>
