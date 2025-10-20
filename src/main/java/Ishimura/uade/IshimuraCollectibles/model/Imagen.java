@@ -11,6 +11,7 @@ import lombok.ToString;
 import java.sql.Blob;
 
 import Ishimura.uade.IshimuraCollectibles.entity.Coleccionable;
+import Ishimura.uade.IshimuraCollectibles.entity.Marca;
 
 
 @Data
@@ -26,9 +27,25 @@ public class Imagen {
 
     private Blob image;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "coleccionable_id") 
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "coleccionable_id", nullable = true)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Coleccionable coleccionable;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "marca_id", nullable = true)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Marca marca;
+
+    @PrePersist
+    @PreUpdate
+    private void validateOwnershipExclusivity() {
+        boolean hasCole = this.coleccionable != null;
+        boolean hasMarca = this.marca != null;
+        if (hasCole == hasMarca) { // both true or both false
+            throw new IllegalArgumentException("La imagen debe pertenecer exactamente a una entidad: coleccionable o marca");
+        }
+    }
 }

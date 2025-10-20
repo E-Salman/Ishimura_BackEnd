@@ -9,6 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 import java.util.Map;
 
@@ -81,6 +82,18 @@ public class GlobalExceptionHandler {
     pd.setProperty("code", "UNEXPECTED_ERROR");
     pd.setProperty("instance", req.getRequestURI());
     return pd;
+  }
+
+  // 6) Multipart: parte requerida faltante (p.ej., 'file') -> 400
+  @ExceptionHandler(MissingServletRequestPartException.class)
+  public ProblemDetail handleMissingPart(MissingServletRequestPartException ex, HttpServletRequest req) {
+    String part = ex.getRequestPartName();
+    return pd(HttpStatus.BAD_REQUEST,
+        "Bad request",
+        "Missing required part '" + part + "'",
+        "BAD_REQUEST",
+        req.getRequestURI(),
+        null);
   }
 
   private ProblemDetail pd(HttpStatus status, String title, String detail,
