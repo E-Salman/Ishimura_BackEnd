@@ -7,6 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "item_carrito")
 public class ItemCarrito {
 
     @Id
@@ -24,3 +25,4 @@ public class ItemCarrito {
     @Column(nullable = false)
     private Integer cantidad;
 }
+
