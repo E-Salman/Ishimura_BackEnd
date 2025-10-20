@@ -41,6 +41,8 @@ public class SecurityConfig {
                                                 // Imagenes de marcas (controlador MarcaImagesController)
                                                 .requestMatchers(HttpMethod.GET, "/marcasImages/**").permitAll()
                                                 .requestMatchers(HttpMethod.POST, "/marcasImages/**").hasAuthority(Rol.ADMIN.name())
+                                                .requestMatchers(HttpMethod.PUT, "/marcasImages/**").hasAuthority(Rol.ADMIN.name())
+                                                .requestMatchers(HttpMethod.DELETE, "/marcasImages/**").hasAuthority(Rol.ADMIN.name())
 
                                                 .requestMatchers("/catalogo", "/catalogo/*")
                                                 .hasAnyAuthority(Rol.USER.name(), Rol.ADMIN.name())

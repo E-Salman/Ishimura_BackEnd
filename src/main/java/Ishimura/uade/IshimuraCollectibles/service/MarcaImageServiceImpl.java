@@ -9,6 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import Ishimura.uade.IshimuraCollectibles.exceptions.ImageNotFoundException;
 import Ishimura.uade.IshimuraCollectibles.exceptions.MarcaNotFoundException;
+import jakarta.transaction.Transactional;
+
+import javax.sql.rowset.serial.SerialBlob;
+import javax.sql.rowset.serial.SerialException;
 
 @Service
 public class MarcaImageServiceImpl implements MarcaImageService {
@@ -50,8 +54,47 @@ public class MarcaImageServiceImpl implements MarcaImageService {
 
     @Override
     public Imagen viewFirstByMarca(Long idMarca) {
-        Long imgId = marcaImageRepository.findTopIdByMarcaId(idMarca)
+        if (!marcaRepository.existsById(idMarca)) {
+            throw new MarcaNotFoundException(idMarca);
+        }
+        return marcaImageRepository.findByMarcaIdOrderByIdAsc(idMarca)
+                .stream()
+                .findFirst()
                 .orElseThrow(() -> new ImageNotFoundException(idMarca));
-        return viewById(imgId);
+    }
+
+    @Override
+    @Transactional
+    public Imagen replaceForMarca(Long idMarca, Long imageId, byte[] bytes) {
+        // asegurar que la marca existe (consistencia)
+        if (!marcaRepository.existsById(idMarca)) {
+            throw new MarcaNotFoundException(idMarca);
+        }
+        Imagen img = marcaImageRepository.findById(imageId)
+                .orElseThrow(() -> new ImageNotFoundException(imageId));
+        // verificar pertenencia
+        if (img.getMarca() == null || !idMarca.equals(img.getMarca().getId())) {
+            throw new ImageNotFoundException(imageId);
+        }
+        try {
+            img.setImage(new SerialBlob(bytes));
+        } catch (java.sql.SQLException e) {
+            throw new IllegalArgumentException("No se pudo procesar el archivo de imagen", e);
+        }
+        return marcaImageRepository.save(img);
+    }
+
+    @Override
+    @Transactional
+    public void deleteForMarca(Long idMarca, Long imageId) {
+        if (!marcaRepository.existsById(idMarca)) {
+            throw new MarcaNotFoundException(idMarca);
+        }
+        Imagen img = marcaImageRepository.findById(imageId)
+                .orElseThrow(() -> new ImageNotFoundException(imageId));
+        if (img.getMarca() == null || !idMarca.equals(img.getMarca().getId())) {
+            throw new ImageNotFoundException(imageId);
+        }
+        marcaImageRepository.delete(img);
     }
 }

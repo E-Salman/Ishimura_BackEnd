@@ -15,4 +15,8 @@ public interface MarcaImageService {
     List<Long> listIdsByMarca(Long idMarca);
 
     Imagen viewFirstByMarca(Long idMarca);
+
+    Imagen replaceForMarca(Long idMarca, Long imageId, byte[] bytes);
+
+    void deleteForMarca(Long idMarca, Long imageId);
 }
