@@ -29,6 +29,8 @@ public class OrdenServiceImpl implements OrdenService {
   private final OrdenRepository ordenRepository;
   private final UserRepository userRepository; // ya existe
   private final MostrarColeccionableRepository coleccionableRepository; // ya existe (también sirve para findById)
+  @Autowired
+  private PricingService pricingService;
 
   public OrdenServiceImpl(
       OrdenRepository ordenRepository,
@@ -55,7 +57,8 @@ public class OrdenServiceImpl implements OrdenService {
       var col = coleccionableRepository.findById(i.getColeccionableId())
           .orElseThrow(() -> new CollectibleNotFoundException(i.getColeccionableId()));
 
-      BigDecimal precioUnit = BigDecimal.valueOf(col.getPrecio());
+      var quote = pricingService.quoteForColeccionable(col, i.getCantidad(), null);
+      BigDecimal precioUnit = quote.getPrecioEfectivo();
       BigDecimal subtotal = precioUnit.multiply(BigDecimal.valueOf(i.getCantidad()));
 
       OrdenItem item = new OrdenItem();

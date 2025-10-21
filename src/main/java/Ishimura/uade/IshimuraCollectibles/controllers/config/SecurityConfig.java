@@ -58,6 +58,13 @@ public class SecurityConfig {
                                                 .hasAuthority(Rol.ADMIN.name())
                                                 .requestMatchers(HttpMethod.DELETE, "/marcasImages/**")
                                                 .hasAuthority(Rol.ADMIN.name())
+                                                // Promociones
+                                                .requestMatchers(HttpMethod.GET, "/promociones/**").permitAll()
+                                                .requestMatchers(HttpMethod.POST, "/promociones/**").hasAuthority(Rol.ADMIN.name())
+                                                .requestMatchers(HttpMethod.PUT, "/promociones/**").hasAuthority(Rol.ADMIN.name())
+                                                .requestMatchers(HttpMethod.DELETE, "/promociones/**").hasAuthority(Rol.ADMIN.name())
+                                                // Preview de precios
+                                                .requestMatchers(HttpMethod.GET, "/precio/**").permitAll()
 
                                                 .requestMatchers("/catalogo", "/catalogo/*")
                                                 .hasAnyAuthority(Rol.USER.name(), Rol.ADMIN.name())

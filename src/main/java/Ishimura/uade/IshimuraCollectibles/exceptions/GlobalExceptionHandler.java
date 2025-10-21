@@ -20,7 +20,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(DomainException.class)
   public ProblemDetail handleDomain(DomainException ex, HttpServletRequest req) {
     HttpStatus status = switch (ex.getCode()) {
-      case CATEGORY_ALREADY_EXISTS, LINE_ALREADY_EXISTS -> HttpStatus.CONFLICT; // 409
+      case CATEGORY_ALREADY_EXISTS, LINE_ALREADY_EXISTS, PROMOTION_CONFLICT -> HttpStatus.CONFLICT; // 409
       case CATEGORY_NOT_FOUND, BRAND_NOT_FOUND, LINE_NOT_FOUND -> HttpStatus.NOT_FOUND; // 404
       case INVALID_DOMAIN_STATE -> HttpStatus.UNPROCESSABLE_ENTITY; // 422
       default -> HttpStatus.UNPROCESSABLE_ENTITY;
