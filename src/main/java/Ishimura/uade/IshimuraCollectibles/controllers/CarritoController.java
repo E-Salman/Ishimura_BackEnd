@@ -1,13 +1,17 @@
 package Ishimura.uade.IshimuraCollectibles.controllers;
 
 import java.util.List;
+
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import Ishimura.uade.IshimuraCollectibles.entity.*;
-import Ishimura.uade.IshimuraCollectibles.service.CarritoService;
 import org.springframework.http.ResponseEntity;
+
+import Ishimura.uade.IshimuraCollectibles.entity.ItemCarrito;
+import Ishimura.uade.IshimuraCollectibles.entity.Usuario;
+import Ishimura.uade.IshimuraCollectibles.entity.dto.CarritoItemDTO;
+import Ishimura.uade.IshimuraCollectibles.service.CarritoService;
 
 @RestController
 @RequestMapping("/carrito")
@@ -18,10 +22,10 @@ public class CarritoController {
     private CarritoService carritoService;
 
     @GetMapping
-    public ResponseEntity<List<ItemCarrito>> verCarrito() {
+    public ResponseEntity<List<CarritoItemDTO>> verCarrito() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Usuario usuario = (Usuario) auth.getPrincipal();
-        List<ItemCarrito> carrito = carritoService.obtenerCarrito(usuario.getId());
+        List<CarritoItemDTO> carrito = carritoService.obtenerCarrito(usuario.getId());
         return ResponseEntity.ok(carrito);
     }
 
@@ -49,5 +53,6 @@ public class CarritoController {
         return ResponseEntity.noContent().build();
     }
 }
+
 
 

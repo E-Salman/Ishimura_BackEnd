@@ -1,10 +1,17 @@
 package Ishimura.uade.IshimuraCollectibles.service;
 
 import java.util.List;
-import org.springframework.stereotype.Service;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import Ishimura.uade.IshimuraCollectibles.entity.*;
-import Ishimura.uade.IshimuraCollectibles.repository.*;
+import org.springframework.stereotype.Service;
+
+import Ishimura.uade.IshimuraCollectibles.entity.Coleccionable;
+import Ishimura.uade.IshimuraCollectibles.entity.ItemCarrito;
+import Ishimura.uade.IshimuraCollectibles.entity.Usuario;
+import Ishimura.uade.IshimuraCollectibles.entity.dto.CarritoItemDTO;
+import Ishimura.uade.IshimuraCollectibles.repository.ColeccionableRepository;
+import Ishimura.uade.IshimuraCollectibles.repository.ItemCarritoRepository;
 
 @Service
 public class CarritoService {
@@ -15,8 +22,26 @@ public class CarritoService {
     @Autowired
     private ColeccionableRepository coleccionableRepo;
 
-    public List<ItemCarrito> obtenerCarrito(Long usuarioId) {
-        return carritoRepo.findByUsuarioId(usuarioId);
+    public List<CarritoItemDTO> obtenerCarrito(Long usuarioId) {
+        List<ItemCarrito> items = carritoRepo.findByUsuarioId(usuarioId);
+
+        return items.stream()
+                .map(i -> {
+                    Coleccionable c = i.getColeccionable();
+                    String imagen = (c.getImagenes() != null && !c.getImagenes().isEmpty())
+                            ? "http://localhost:4002/imagenes?id=" + c.getImagenes().get(0).getId()
+                            : null;
+
+                    return new CarritoItemDTO(
+                            i.getId(),
+                            c.getId(),
+                            c.getNombre(),
+                            c.getPrecio(),
+                            i.getCantidad(),
+                            imagen
+                    );
+                })
+                .collect(Collectors.toList());
     }
 
     public ItemCarrito agregarAlCarrito(Usuario usuario, Long coleccionableId, int cantidad) {
