@@ -7,5 +7,6 @@ import java.util.List;
 public class CrearOrdenDTO {
   private String metodoPago;
   private List<ItemDTO> items;
+  private DireccionEnvioDTO direccionEnvio;
 }
 

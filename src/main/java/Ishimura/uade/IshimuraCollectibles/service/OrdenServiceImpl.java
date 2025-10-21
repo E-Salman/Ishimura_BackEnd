@@ -1,21 +1,11 @@
 package Ishimura.uade.IshimuraCollectibles.service;
 
-import Ishimura.uade.IshimuraCollectibles.entity.Orden;
-import Ishimura.uade.IshimuraCollectibles.entity.OrdenItem;
-import Ishimura.uade.IshimuraCollectibles.entity.Usuario;
-import Ishimura.uade.IshimuraCollectibles.entity.dto.CrearOrdenDTO;
-import Ishimura.uade.IshimuraCollectibles.entity.dto.ItemDTO;
-import Ishimura.uade.IshimuraCollectibles.entity.dto.OrdenDetalleDTO;
-import Ishimura.uade.IshimuraCollectibles.entity.dto.OrdenItemDTO;
-import Ishimura.uade.IshimuraCollectibles.entity.dto.OrdenResumenDTO;
-import Ishimura.uade.IshimuraCollectibles.repository.MostrarColeccionableRepository;
-import Ishimura.uade.IshimuraCollectibles.repository.OrdenRepository;
-import Ishimura.uade.IshimuraCollectibles.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import Ishimura.uade.IshimuraCollectibles.entity.*;
+import Ishimura.uade.IshimuraCollectibles.entity.dto.*;
+import Ishimura.uade.IshimuraCollectibles.repository.*;
+import Ishimura.uade.IshimuraCollectibles.exceptions.*;
 import org.springframework.stereotype.Service;
-import Ishimura.uade.IshimuraCollectibles.exceptions.UserNotFoundException;
-import Ishimura.uade.IshimuraCollectibles.exceptions.CollectibleNotFoundException;
-import Ishimura.uade.IshimuraCollectibles.exceptions.OrderNotFoundException;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -27,18 +17,23 @@ import java.util.stream.Collectors;
 public class OrdenServiceImpl implements OrdenService {
 
   private final OrdenRepository ordenRepository;
-  private final UserRepository userRepository; // ya existe
-  private final MostrarColeccionableRepository coleccionableRepository; // ya existe (también sirve para findById)
+  private final UserRepository userRepository;
+  private final MostrarColeccionableRepository coleccionableRepository;
+  private final CatalogoRepository catalogoRepository;
 
   public OrdenServiceImpl(
       OrdenRepository ordenRepository,
       UserRepository userRepository,
-      MostrarColeccionableRepository coleccionableRepository) {
+      MostrarColeccionableRepository coleccionableRepository,
+      CatalogoRepository catalogoRepository) {
     this.ordenRepository = ordenRepository;
     this.userRepository = userRepository;
     this.coleccionableRepository = coleccionableRepository;
+    this.catalogoRepository = catalogoRepository;
   }
 
+  // ===================== CREAR ORDEN =====================
+  @Transactional
   @Override
   public OrdenDetalleDTO crearOrden(Long usuarioId, CrearOrdenDTO dto) {
     Usuario usuario = userRepository.findById(usuarioId)
@@ -51,23 +46,50 @@ public class OrdenServiceImpl implements OrdenService {
     orden.setCreadaEn(LocalDateTime.now());
     orden.setMontoTotal(BigDecimal.ZERO);
 
+    // ===================== DIRECCIÓN DE ENVÍO =====================
+    if (dto.getDireccionEnvio() != null) {
+      DireccionEnvio dir = new DireccionEnvio();
+      dir.setCalle(dto.getDireccionEnvio().getCalle());
+      dir.setNumero(dto.getDireccionEnvio().getNumero());
+      dir.setCiudad(dto.getDireccionEnvio().getCiudad());
+      dir.setProvincia(dto.getDireccionEnvio().getProvincia());
+      dir.setCodigoPostal(dto.getDireccionEnvio().getCodigoPostal());
+      dir.setPais(dto.getDireccionEnvio().getPais());
+      orden.setDireccionEnvio(dir);
+    }
+
+    // ===================== ITEMS Y STOCK =====================
     for (ItemDTO i : dto.getItems()) {
       var col = coleccionableRepository.findById(i.getColeccionableId())
           .orElseThrow(() -> new CollectibleNotFoundException(i.getColeccionableId()));
 
+      var catalogo = catalogoRepository.findById(i.getColeccionableId())
+          .orElseThrow(() -> new CollectibleNotFoundException(i.getColeccionableId()));
+
+      int stockActual = catalogo.getStock();
+      int cantidad = i.getCantidad();
+
+      if (stockActual < cantidad) {
+        throw new IllegalStateException("No hay stock suficiente para el producto: " + col.getNombre());
+      }
+
+      int nuevoStock = stockActual - cantidad;
+      catalogoRepository.updateStock(i.getColeccionableId(), nuevoStock);
+
       BigDecimal precioUnit = BigDecimal.valueOf(col.getPrecio());
-      BigDecimal subtotal = precioUnit.multiply(BigDecimal.valueOf(i.getCantidad()));
+      BigDecimal subtotal = precioUnit.multiply(BigDecimal.valueOf(cantidad));
 
       OrdenItem item = new OrdenItem();
       item.setOrden(orden);
       item.setColeccionable(col);
-      item.setCantidad(i.getCantidad());
+      item.setCantidad(cantidad);
       item.setPrecioUnitario(precioUnit);
       item.setSubtotal(subtotal);
 
       orden.getArticulos().add(item);
     }
 
+    // ===================== TOTAL =====================
     BigDecimal total = orden.getArticulos().stream()
         .map(OrdenItem::getSubtotal)
         .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -77,22 +99,17 @@ public class OrdenServiceImpl implements OrdenService {
     return toDetalleDTO(guardada);
   }
 
+  // ===================== LISTADOS =====================
+
   @Override
   public List<OrdenResumenDTO> listarResumenMias(Long usuarioId) {
     return ordenRepository.findAllByUsuario_Id(usuarioId).stream()
-        .map(o -> {
-          OrdenResumenDTO out = new OrdenResumenDTO();
-          out.setNumeroOrden(o.getNumeroOrden());
-          out.setMontoTotal(o.getMontoTotal());
-          out.setCreadaEn(o.getCreadaEn());
-          return out;
-        })
+        .map(o -> new OrdenResumenDTO(o.getNumeroOrden(), o.getMontoTotal(), o.getCreadaEn()))
         .collect(Collectors.toList());
   }
 
   @Override
   public List<OrdenResumenDTO> listarResumenDeUsuario(Long usuarioId) {
-    // misma logica- el control de rol ADMIN lo hace el Controller/Security
     return listarResumenMias(usuarioId);
   }
 
@@ -121,7 +138,7 @@ public class OrdenServiceImpl implements OrdenService {
         .stream().map(this::toOrdenDetalleDTOAdmin).toList();
   }
 
-  // =================== Menor prioridad ===================
+  // ===================== FILTROS =====================
 
   @Override
   public List<OrdenResumenDTO> listarPorMontoMenorA(BigDecimal max) {
@@ -172,7 +189,7 @@ public class OrdenServiceImpl implements OrdenService {
         .toList();
   }
 
-  // =================== helpers ===================
+  // ===================== HELPERS =====================
 
   private OrdenDetalleDTO toDetalleDTO(Orden o) {
     var items = o.getArticulos().stream().map(it -> new OrdenItemDTO(
@@ -209,8 +226,6 @@ public class OrdenServiceImpl implements OrdenService {
   }
 
   private OrdenDetalleDTO toOrdenDetalleDTOAdmin(Orden o) {
-    // mismo cuerpo que USER; si quisieras agregar info de usuario,
-    // se podría extender el DTO, pero me pediste usar el tuyo actual.
     return toOrdenDetalleDTOUser(o);
   }
 
@@ -223,18 +238,5 @@ public class OrdenServiceImpl implements OrdenService {
         it.getCantidad(),
         it.getPrecioUnitario(),
         subtotal);
-  }
-
-  private OrdenResumenDTO toOrdenResumenDTO(Orden o) {
-    var total = (o.getMontoTotal() != null)
-        ? o.getMontoTotal()
-        : o.getArticulos().stream()
-            .map(i -> i.getPrecioUnitario().multiply(BigDecimal.valueOf(i.getCantidad())))
-            .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-    return new OrdenResumenDTO(
-        o.getNumeroOrden(),
-        total,
-        o.getCreadaEn());
   }
 }
