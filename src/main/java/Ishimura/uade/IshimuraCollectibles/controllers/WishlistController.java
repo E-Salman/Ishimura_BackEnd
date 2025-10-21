@@ -1,13 +1,17 @@
 package Ishimura.uade.IshimuraCollectibles.controllers;
 
 import java.util.List;
+
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import Ishimura.uade.IshimuraCollectibles.entity.*;
+
+import Ishimura.uade.IshimuraCollectibles.entity.ItemWishlist;
+import Ishimura.uade.IshimuraCollectibles.entity.Usuario;
+import Ishimura.uade.IshimuraCollectibles.entity.dto.WishlistItemDTO;
 import Ishimura.uade.IshimuraCollectibles.service.WishlistService;
-import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/wishlist")
@@ -18,16 +22,15 @@ public class WishlistController {
     private WishlistService wishlistService;
 
     @GetMapping
-    public ResponseEntity<List<ItemWishlist>> verWishlist() {
+    public ResponseEntity<List<WishlistItemDTO>> verWishlist() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Usuario usuario = (Usuario) auth.getPrincipal();
-        List<ItemWishlist> wishlist = wishlistService.obtenerWishlist(usuario.getId());
+        List<WishlistItemDTO> wishlist = wishlistService.obtenerWishlist(usuario.getId());
         return ResponseEntity.ok(wishlist);
     }
 
     @PostMapping("/{coleccionableId}")
-    public ResponseEntity<ItemWishlist> agregar(
-            @PathVariable Long coleccionableId) {
+    public ResponseEntity<ItemWishlist> agregar(@PathVariable Long coleccionableId) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Usuario usuario = (Usuario) auth.getPrincipal();
         ItemWishlist item = wishlistService.agregarAWishlist(usuario, coleccionableId);
@@ -48,4 +51,3 @@ public class WishlistController {
         return ResponseEntity.noContent().build();
     }
 }
-

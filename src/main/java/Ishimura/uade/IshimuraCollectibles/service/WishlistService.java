@@ -1,10 +1,17 @@
 package Ishimura.uade.IshimuraCollectibles.service;
 
 import java.util.List;
-import org.springframework.stereotype.Service;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import Ishimura.uade.IshimuraCollectibles.entity.*;
-import Ishimura.uade.IshimuraCollectibles.repository.*;
+import org.springframework.stereotype.Service;
+
+import Ishimura.uade.IshimuraCollectibles.entity.Coleccionable;
+import Ishimura.uade.IshimuraCollectibles.entity.ItemWishlist;
+import Ishimura.uade.IshimuraCollectibles.entity.Usuario;
+import Ishimura.uade.IshimuraCollectibles.entity.dto.WishlistItemDTO;
+import Ishimura.uade.IshimuraCollectibles.repository.ColeccionableRepository;
+import Ishimura.uade.IshimuraCollectibles.repository.ItemWishlistRepository;
 
 @Service
 public class WishlistService {
@@ -15,8 +22,25 @@ public class WishlistService {
     @Autowired
     private ColeccionableRepository coleccionableRepo;
 
-    public List<ItemWishlist> obtenerWishlist(Long usuarioId) {
-        return wishlistRepo.findByUsuarioId(usuarioId);
+    public List<WishlistItemDTO> obtenerWishlist(Long usuarioId) {
+        List<ItemWishlist> items = wishlistRepo.findByUsuarioId(usuarioId);
+
+        return items.stream()
+                .map(i -> {
+                    Coleccionable c = i.getColeccionable();
+                    String imagen = (c.getImagenes() != null && !c.getImagenes().isEmpty())
+                            ? "http://localhost:4002/imagenes?id=" + c.getImagenes().get(0).getId()
+                            : null;
+
+                    return new WishlistItemDTO(
+                            i.getId(),
+                            c.getId(),
+                            c.getNombre(),
+                            c.getPrecio(),
+                            imagen
+                    );
+                })
+                .collect(Collectors.toList());
     }
 
     public ItemWishlist agregarAWishlist(Usuario usuario, Long coleccionableId) {
