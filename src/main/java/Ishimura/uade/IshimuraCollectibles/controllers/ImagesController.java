@@ -17,7 +17,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -49,5 +51,27 @@ public class ImagesController {
         return "Creado";
     }
 
-}
+    @DeleteMapping("/{imageId}")
+    public ResponseEntity<Void> deleteImage(@PathVariable Long imageId) {
+        imageService.deleteCollectibleImage(imageId);
+        return ResponseEntity.noContent().build();
+    }
 
+    // Borrar por id de coleccionable
+    // Por defecto elimina solo la primera imagen (modo seguro).
+    // Para eliminar todas, usar mode=all.
+    @DeleteMapping("/coleccionable/{coleccionableId}")
+    public ResponseEntity<?> deleteByColeccionable(@PathVariable Long coleccionableId,
+                                                @RequestParam(name = "mode", defaultValue = "first") String mode) {
+        if ("all".equalsIgnoreCase(mode)) {
+            int count = imageService.deleteAllForColeccionable(coleccionableId);
+            return ResponseEntity.ok(count);
+        } else if ("first".equalsIgnoreCase(mode)) {
+            imageService.deleteFirstForColeccionable(coleccionableId);
+            return ResponseEntity.noContent().build();
+        } else {
+            throw new IllegalArgumentException("mode debe ser 'first' o 'all'");
+        }
+    }
+
+}
