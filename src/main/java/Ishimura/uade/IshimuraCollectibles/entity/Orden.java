@@ -32,4 +32,8 @@ public class Orden {
 
   @OneToMany(mappedBy = "orden", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<OrdenItem> articulos = new ArrayList<>();
+
+  @OneToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "direccion_envio_id")
+  private DireccionEnvio direccionEnvio;
 }
