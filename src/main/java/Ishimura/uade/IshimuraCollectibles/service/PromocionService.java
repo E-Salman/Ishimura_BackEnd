@@ -14,7 +14,9 @@ import java.util.List;
 public class PromocionService {
   private final PromocionRepository repo;
 
-  public PromocionService(PromocionRepository repo) { this.repo = repo; }
+  public PromocionService(PromocionRepository repo) {
+    this.repo = repo;
+  }
 
   public Promocion crear(Promocion p) {
     validarCampos(p);
@@ -25,13 +27,20 @@ public class PromocionService {
   public Promocion actualizar(Long id, Promocion body) {
     Promocion p = repo.findById(id).orElseThrow();
     // aplicar cambios (parciales)
-    if (body.getTipo() != null) p.setTipo(body.getTipo());
-    if (body.getValor() != null) p.setValor(body.getValor());
-    if (body.getScopeType() != null) p.setScopeType(body.getScopeType());
-    if (body.getScopeId() != null) p.setScopeId(body.getScopeId());
-    if (body.getInicio() != null) p.setInicio(body.getInicio());
-    if (body.getFin() != null) p.setFin(body.getFin());
-    if (body.getPrioridad() != 0) p.setPrioridad(body.getPrioridad());
+    if (body.getTipo() != null)
+      p.setTipo(body.getTipo());
+    if (body.getValor() != null)
+      p.setValor(body.getValor());
+    if (body.getScopeType() != null)
+      p.setScopeType(body.getScopeType());
+    if (body.getScopeId() != null)
+      p.setScopeId(body.getScopeId());
+    if (body.getInicio() != null)
+      p.setInicio(body.getInicio());
+    if (body.getFin() != null)
+      p.setFin(body.getFin());
+    if (body.getPrioridad() != 0)
+      p.setPrioridad(body.getPrioridad());
     p.setActiva(body.isActiva());
     p.setStackable(body.isStackable());
 
@@ -41,14 +50,17 @@ public class PromocionService {
   }
 
   private void validarConflicto(Promocion p, Long ignoreId) {
-    if (!p.isActiva()) return; // solo nos importan las activas
-    if (p.getScopeType() != PromotionScopeType.ITEM || p.getScopeId() == null) return; // regla: solo ITEM
+    if (!p.isActiva())
+      return; // solo nos importan las activas
+    if (p.getScopeType() != PromotionScopeType.ITEM || p.getScopeId() == null)
+      return; // regla: solo ITEM
 
     List<Promocion> activas = repo.findByScopeTypeAndScopeIdAndActiva(PromotionScopeType.ITEM, p.getScopeId(), true);
     LocalDateTime s1 = p.getInicio();
     LocalDateTime e1 = p.getFin();
     for (Promocion other : activas) {
-      if (ignoreId != null && other.getId().equals(ignoreId)) continue;
+      if (ignoreId != null && other.getId().equals(ignoreId))
+        continue;
       if (overlaps(s1, e1, other.getInicio(), other.getFin())) {
         throw new PromotionConflictException(p.getScopeId());
       }
@@ -56,7 +68,7 @@ public class PromocionService {
   }
 
   private boolean overlaps(LocalDateTime aStart, LocalDateTime aEnd,
-                           LocalDateTime bStart, LocalDateTime bEnd) {
+      LocalDateTime bStart, LocalDateTime bEnd) {
     LocalDateTime startA = aStart == null ? LocalDateTime.MIN : aStart;
     LocalDateTime endA = aEnd == null ? LocalDateTime.MAX : aEnd;
     LocalDateTime startB = bStart == null ? LocalDateTime.MIN : bStart;

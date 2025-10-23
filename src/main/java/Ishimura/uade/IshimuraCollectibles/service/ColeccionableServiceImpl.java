@@ -57,6 +57,13 @@ public class ColeccionableServiceImpl implements ColeccionableService {
 
         @Override
         public Coleccionable crearColeccionable(ColeccionableDTO coleccionableDTO) {
+                // Validación de duplicados: mismo nombre en la misma línea
+                boolean existe = mostrarAtributosRepository
+                                .existsByNombreIgnoreCaseAndLinea_Id(coleccionableDTO.getNombre(), coleccionableDTO.getLinea());
+                if (existe) {
+                        throw new Ishimura.uade.IshimuraCollectibles.exceptions.CollectibleDuplicateException(
+                                        coleccionableDTO.getNombre(), coleccionableDTO.getLinea());
+                }
                 Coleccionable coleccionable = new Coleccionable();
                 coleccionable.setNombre(coleccionableDTO.getNombre());
                 coleccionable.setDescription(coleccionableDTO.getDescripcion());

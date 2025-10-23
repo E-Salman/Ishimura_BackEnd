@@ -31,12 +31,13 @@ public class MostrarLineaServiceImpl implements MostrarLineaService {
     public MostrarLineaDTO crearLinea(CLineaDTO cLineaDTO) {
         Linea linea = new Linea();
         linea.setNombre(cLineaDTO.getNombre());
-        if (cLineaDTO.getIdMarca() != null) {
-            // Verificar que la marca exista, lanzar 404 si no
-            Marca marca = mostrarMarcaRepository.findById(cLineaDTO.getIdMarca())
-                    .orElseThrow(() -> new MarcaNotFoundException(cLineaDTO.getIdMarca()));
-            linea.setMarca(marca);
+        if (cLineaDTO.getIdMarca() == null) {
+            throw new Ishimura.uade.IshimuraCollectibles.exceptions.InvalidDomainStateException("idMarca es obligatorio");
         }
+        // Verificar que la marca exista, lanzar 404 si no
+        Marca marca = mostrarMarcaRepository.findById(cLineaDTO.getIdMarca())
+                .orElseThrow(() -> new MarcaNotFoundException(cLineaDTO.getIdMarca()));
+        linea.setMarca(marca);
         Linea saved = mostrarLineaRepository.save(linea);
         return new MostrarLineaDTO(saved.getId(), saved.getNombre());
     }
