@@ -5,7 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import Ishimura.uade.IshimuraCollectibles.entity.Catalogo;
+import Ishimura.uade.IshimuraCollectibles.entity.Coleccionable;
+import Ishimura.uade.IshimuraCollectibles.entity.dto.CatalogoListItemDTO;
 import Ishimura.uade.IshimuraCollectibles.repository.CatalogoRepository;
+import Ishimura.uade.IshimuraCollectibles.repository.ImageRepository;
 import Ishimura.uade.IshimuraCollectibles.exceptions.CatalogItemNotFoundException;
 import Ishimura.uade.IshimuraCollectibles.exceptions.InvalidDomainStateException;
 
@@ -13,14 +16,30 @@ import Ishimura.uade.IshimuraCollectibles.exceptions.InvalidDomainStateException
 public class CatalogoService {
 
     private final CatalogoRepository repo;
+    private final ImageRepository imageRepo;
 
     @Autowired
-    public CatalogoService(CatalogoRepository repo) {
+    public CatalogoService(CatalogoRepository repo, ImageRepository imageRepo) {
         this.repo = repo;
+        this.imageRepo = imageRepo;
     }
 
     public List<Catalogo> getAll() {
         return repo.findAll();
+    }
+
+    public List<CatalogoListItemDTO> getListado() {
+        return repo.findAll().stream().map(item -> {
+            Coleccionable c = item.getColeccionable();
+            Long firstImageId = imageRepo.findTopIdByColeccionableId(c.getId()).orElse(null);
+            return new CatalogoListItemDTO(
+                c.getId(),
+                c.getNombre(),
+                c.getPrecio(),
+                item.getStock(),
+                firstImageId
+            );
+        }).toList();
     }
     
     public Catalogo stockProducto(Long coleccionableId) {

@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -23,7 +26,12 @@ public class MostrarLineaController {
     }
 
     @PostMapping("/crear")
-    public MostrarLineaDTO crearLinea(@RequestBody CLineaDTO lineaDTO) {
+    public MostrarLineaDTO crearLinea(@Valid @RequestBody CLineaDTO lineaDTO) {
         return mostrarLineaService.crearLinea(lineaDTO);
+    }
+
+    @DeleteMapping("/{lineaId}")
+    public void borrarLinea(@PathVariable Long lineaId) {
+        mostrarLineaService.borrarLinea(lineaId);
     }
 }

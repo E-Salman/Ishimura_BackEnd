@@ -1,5 +1,7 @@
 package Ishimura.uade.IshimuraCollectibles.entity.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,6 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CLineaDTO {
+    @NotNull(message = "idMarca es obligatorio")
     private Long idMarca;
+
+    @NotBlank(message = "nombre es obligatorio")
     private String nombre;
 }

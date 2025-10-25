@@ -15,11 +15,15 @@ import Ishimura.uade.IshimuraCollectibles.repository.MostrarLineaRepository;
 import Ishimura.uade.IshimuraCollectibles.exceptions.CollectibleNotFoundException;
 import Ishimura.uade.IshimuraCollectibles.exceptions.ImageNotFoundException;
 import Ishimura.uade.IshimuraCollectibles.exceptions.LineaNotFoundException;
+import Ishimura.uade.IshimuraCollectibles.exceptions.CollectibleDuplicateException;
+import Ishimura.uade.IshimuraCollectibles.repository.ItemCarritoRepository;
+import Ishimura.uade.IshimuraCollectibles.repository.ItemWishlistRepository;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -40,23 +44,44 @@ public class ColeccionableServiceImpl implements ColeccionableService {
         @Autowired
         private ImageRepository imageRepository;
 
+        @Autowired
+        private ItemCarritoRepository itemCarritoRepository;
+
+        @Autowired
+        private ItemWishlistRepository itemWishlistRepository;
+
         @Override
-        public ColeccionableDTO mostrarAtributos(@PathVariable Long id) {
+        public MostrarColeccionableDTO mostrarAtributosID(@PathVariable Long id) {
                 Coleccionable col = mostrarAtributosRepository.findById(id)
                                 .orElseThrow(() -> new CollectibleNotFoundException(id));
 
                 List<Long> idImagenes = col.getImagenes().stream().map(Imagen::getId).collect(Collectors.toList());
+                Long lineaId = col.getLinea() != null ? col.getLinea().getId() : null;
+                String nombreLinea = col.getLinea() != null ? col.getLinea().getNombre() : null;
+                Long marcaId = (col.getLinea() != null && col.getLinea().getMarca() != null) ? col.getLinea().getMarca().getId() : null;
+                String nombreMarca = (col.getLinea() != null && col.getLinea().getMarca() != null) ? col.getLinea().getMarca().getNombre() : null;
 
-                return new ColeccionableDTO(
+                return new MostrarColeccionableDTO(
+                                col.getId(),
                                 col.getNombre(),
                                 col.getDescription(),
                                 col.getPrecio(),
-                                col.getLinea().getId(),
-                                idImagenes);
+                                idImagenes,
+                                lineaId,
+                                nombreLinea,
+                                marcaId,
+                                nombreMarca);
         }
 
         @Override
         public Coleccionable crearColeccionable(ColeccionableDTO coleccionableDTO) {
+                // Validación de duplicados: mismo nombre en la misma línea
+                boolean existe = mostrarAtributosRepository
+                                .existsByNombreIgnoreCaseAndLinea_Id(coleccionableDTO.getNombre(), coleccionableDTO.getLinea());
+                if (existe) {
+                        throw new Ishimura.uade.IshimuraCollectibles.exceptions.CollectibleDuplicateException(
+                                        coleccionableDTO.getNombre(), coleccionableDTO.getLinea());
+                }
                 Coleccionable coleccionable = new Coleccionable();
                 coleccionable.setNombre(coleccionableDTO.getNombre());
                 coleccionable.setDescription(coleccionableDTO.getDescripcion());
@@ -79,5 +104,62 @@ public class ColeccionableServiceImpl implements ColeccionableService {
                 catalogoRepository.save(catalogo);      
 
                 return saved;
+        }
+
+        @Override
+        @Transactional
+        public Coleccionable actualizarColeccionable(Long id, ColeccionableDTO dto) {
+                Coleccionable existente = mostrarAtributosRepository.findById(id)
+                                .orElseThrow(() -> new CollectibleNotFoundException(id));
+
+                String nuevoNombre = dto.getNombre() != null ? dto.getNombre() : existente.getNombre();
+                Long nuevaLineaId = dto.getLinea() != null ? dto.getLinea() : existente.getLinea().getId();
+                boolean dup = mostrarAtributosRepository
+                                .existsByNombreIgnoreCaseAndLinea_IdAndIdNot(nuevoNombre, nuevaLineaId, id);
+                if (dup) {
+                        throw new CollectibleDuplicateException(nuevoNombre, nuevaLineaId);
+                }
+
+                if (dto.getNombre() != null) existente.setNombre(dto.getNombre());
+                if (dto.getDescripcion() != null) existente.setDescription(dto.getDescripcion());
+                if (dto.getPrecio() != null) existente.setPrecio(dto.getPrecio());
+
+                if (dto.getLinea() != null) {
+                        Linea nuevaLinea = lineaRepository.findById(dto.getLinea())
+                                        .orElseThrow(() -> new LineaNotFoundException(dto.getLinea()));
+                        existente.setLinea(nuevaLinea);
+                }
+
+                // Reemplazar imágenes asociadas si se envía la lista
+                if (dto.getImagenes() != null) {
+                        List<Imagen> nuevasImagenes = new LinkedList<>();
+                        for (Long imgId : dto.getImagenes()) {
+                                Imagen img = imageRepository.findById(imgId)
+                                                .orElseThrow(() -> new ImageNotFoundException(imgId));
+                                nuevasImagenes.add(img);
+                        }
+                        existente.setImagenes(nuevasImagenes);
+                }
+
+                return mostrarAtributosRepository.save(existente);
+        }
+
+        @Override
+        @Transactional
+        public void borrarColeccionable(Long id) {
+                Coleccionable existente = mostrarAtributosRepository.findById(id)
+                                .orElseThrow(() -> new CollectibleNotFoundException(id));
+
+                // Borrar dependientes para evitar FK
+                var imgs = imageRepository.findByColeccionableIdOrderByIdAsc(id);
+                if (!imgs.isEmpty()) {
+                        imageRepository.deleteAll(imgs);
+                }
+                itemCarritoRepository.deleteByColeccionableId(id);
+                itemWishlistRepository.deleteByColeccionableId(id);
+                catalogoRepository.deleteById(id);
+
+                // Borrar coleccionable
+                mostrarAtributosRepository.delete(existente);
         }
 }

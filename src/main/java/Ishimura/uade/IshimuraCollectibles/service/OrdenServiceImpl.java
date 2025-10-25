@@ -20,6 +20,7 @@ public class OrdenServiceImpl implements OrdenService {
   private final UserRepository userRepository;
   private final MostrarColeccionableRepository coleccionableRepository;
   private final CatalogoRepository catalogoRepository;
+  private PricingService pricingService;
 
   public OrdenServiceImpl(
       OrdenRepository ordenRepository,
@@ -76,7 +77,8 @@ public class OrdenServiceImpl implements OrdenService {
       int nuevoStock = stockActual - cantidad;
       catalogoRepository.updateStock(i.getColeccionableId(), nuevoStock);
 
-      BigDecimal precioUnit = BigDecimal.valueOf(col.getPrecio());
+      var quote = pricingService.quoteForColeccionable(col, i.getCantidad(), null);
+      BigDecimal precioUnit = quote.getPrecioEfectivo();
       BigDecimal subtotal = precioUnit.multiply(BigDecimal.valueOf(cantidad));
 
       OrdenItem item = new OrdenItem();

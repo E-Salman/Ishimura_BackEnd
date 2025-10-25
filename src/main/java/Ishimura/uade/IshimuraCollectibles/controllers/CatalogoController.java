@@ -2,6 +2,7 @@ package Ishimura.uade.IshimuraCollectibles.controllers;
 
 import Ishimura.uade.IshimuraCollectibles.entity.Catalogo;
 import Ishimura.uade.IshimuraCollectibles.entity.dto.CatalogoDTO;
+import Ishimura.uade.IshimuraCollectibles.entity.dto.CatalogoListItemDTO;
 import Ishimura.uade.IshimuraCollectibles.service.CatalogoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +19,8 @@ public class CatalogoController {
 
     // Listar todos los coleccionables en el catálogo
     @GetMapping
-    public ResponseEntity<List<Catalogo>> getCatalogo() {
-        return ResponseEntity.ok(catalogoService.getAll());
+    public ResponseEntity<List<CatalogoListItemDTO>> getCatalogo() {
+        return ResponseEntity.ok(catalogoService.getListado());
     }
 
     // obtener el coleccionable por id */

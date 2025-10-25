@@ -16,4 +16,9 @@ public interface MostrarColeccionableRepository extends JpaRepository<Colecciona
     @Query("select c from Marca m join m.lineas l join l.coleccionables c where c.id = :id")
     List<Coleccionable> findDetalleById(Long id);
 
+    boolean existsByNombreIgnoreCaseAndLinea_Id(String nombre, Long lineaId);
+    boolean existsByNombreIgnoreCaseAndLinea_IdAndIdNot(String nombre, Long lineaId, Long id);
+    boolean existsByLinea_Id(Long lineaId);
+    java.util.List<Coleccionable> findByLinea_Id(Long lineaId);
+
 }

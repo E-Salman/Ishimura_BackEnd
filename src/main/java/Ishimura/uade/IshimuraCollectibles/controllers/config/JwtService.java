@@ -2,6 +2,8 @@ package Ishimura.uade.IshimuraCollectibles.controllers.config;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.function.Function;
 
 import javax.crypto.SecretKey;
@@ -26,11 +28,24 @@ public class JwtService {
     }
 
     private String buildToken(UserDetails userDetails, long expiration) {
+        List<String> authorities = userDetails.getAuthorities()
+                .stream()
+                .map(auth -> auth.getAuthority())
+                .collect(Collectors.toList());
+
+        String role = null;
+        if (userDetails instanceof Ishimura.uade.IshimuraCollectibles.entity.Usuario u) {
+            role = u.getRol() != null ? u.getRol().name() : null;
+        } else if (!authorities.isEmpty()) {
+            role = authorities.get(0);
+        }
+
         return Jwts
                 .builder()
-                .subject(userDetails.getUsername()) // prueba@hotmail.com
+                .subject(userDetails.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .claim("Gisele", 1234567)
+                .claim("authorities", authorities)
+                .claim("role", role)
                 .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSecretKey())
                 .compact();
