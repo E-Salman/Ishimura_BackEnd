@@ -32,10 +32,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain)
             throws ServletException, IOException {
+
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String userEmail;
-        if (authHeader == null || !authHeader.startsWith("Bearer")) {
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -49,6 +51,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             unauthorized(response, request, "JWT inválido");
             return;
         }
+
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails;
             try {
@@ -62,8 +65,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         userDetails,
                         null,
                         userDetails.getAuthorities());
-                authToken.setDetails(
-                        new WebAuthenticationDetailsSource().buildDetails(request));
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             } else {
                 unauthorized(response, request, "JWT inválido");
