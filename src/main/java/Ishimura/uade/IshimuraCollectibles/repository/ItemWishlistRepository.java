@@ -7,4 +7,5 @@ import Ishimura.uade.IshimuraCollectibles.entity.ItemWishlist;
 public interface ItemWishlistRepository extends JpaRepository<ItemWishlist, Long> {
     List<ItemWishlist> findByUsuarioId(Long usuarioId);
     boolean existsByUsuarioIdAndColeccionableId(Long usuarioId, Long coleccionableId);
+    long deleteByColeccionableId(Long coleccionableId);
 }

@@ -8,4 +8,6 @@ public interface MostrarLineaService {
     List<MostrarLineaDTO> listarLineas();
 
     MostrarLineaDTO crearLinea(CLineaDTO cLineaDTO);
+
+    void borrarLinea(Long id);
 }

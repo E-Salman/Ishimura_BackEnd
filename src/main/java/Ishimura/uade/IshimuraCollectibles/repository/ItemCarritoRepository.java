@@ -6,4 +6,5 @@ import Ishimura.uade.IshimuraCollectibles.entity.ItemCarrito;
 
 public interface ItemCarritoRepository extends JpaRepository<ItemCarrito, Long> {
     List<ItemCarrito> findByUsuarioId(Long usuarioId);
+    long deleteByColeccionableId(Long coleccionableId);
 }
