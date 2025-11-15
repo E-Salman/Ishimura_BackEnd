@@ -7,7 +7,15 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "item_wishlist")
+@Table(
+    name = "item_wishlist",
+    uniqueConstraints = {
+        @UniqueConstraint(
+            name = "uk_item_wishlist_usuario_coleccionable",
+            columnNames = {"usuario_id", "coleccionable_id"}
+        )
+    }
+)
 public class ItemWishlist {
 
     @Id

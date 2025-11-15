@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import Ishimura.uade.IshimuraCollectibles.entity.Coleccionable;
@@ -26,25 +27,24 @@ public class CarritoService {
         List<ItemCarrito> items = carritoRepo.findByUsuarioId(usuarioId);
 
         return items.stream()
-                .map(i -> {
-                    Coleccionable c = i.getColeccionable();
-                    String imagen = (c.getImagenes() != null && !c.getImagenes().isEmpty())
-                            ? "http://localhost:4002/imagenes?id=" + c.getImagenes().get(0).getId()
-                            : null;
-
-                    return new CarritoItemDTO(
-                            i.getId(),
-                            c.getId(),
-                            c.getNombre(),
-                            c.getPrecio(),
-                            i.getCantidad(),
-                            imagen
-                    );
-                })
+                .map(this::toDTO)
                 .collect(Collectors.toList());
     }
 
     public ItemCarrito agregarAlCarrito(Usuario usuario, Long coleccionableId, int cantidad) {
+        if (cantidad <= 0) {
+            throw new IllegalArgumentException("La cantidad debe ser mayor que cero");
+        }
+
+        ItemCarrito existente = carritoRepo
+                .findByUsuarioIdAndColeccionableId(usuario.getId(), coleccionableId)
+                .orElse(null);
+
+        if (existente != null) {
+            existente.setCantidad(existente.getCantidad() + cantidad);
+            return carritoRepo.save(existente);
+        }
+
         Coleccionable coleccionable = coleccionableRepo.findById(coleccionableId)
                 .orElseThrow(() -> new RuntimeException("Coleccionable no encontrado"));
 
@@ -56,6 +56,24 @@ public class CarritoService {
         return carritoRepo.save(item);
     }
 
+    public CarritoItemDTO actualizarCantidad(Long itemId, Long usuarioId, int cantidad) {
+        if (cantidad <= 0) {
+            throw new IllegalArgumentException("La cantidad debe ser mayor que cero");
+        }
+
+        ItemCarrito item = carritoRepo.findById(itemId)
+                .orElseThrow(() -> new RuntimeException("Item de carrito no encontrado"));
+
+        if (!item.getUsuario().getId().equals(usuarioId)) {
+            throw new AccessDeniedException("El item no pertenece al usuario autenticado");
+        }
+
+        item.setCantidad(cantidad);
+        ItemCarrito actualizado = carritoRepo.save(item);
+
+        return toDTO(actualizado);
+    }
+
     public void eliminarItem(Long id) {
         carritoRepo.deleteById(id);
     }
@@ -63,5 +81,21 @@ public class CarritoService {
     public void vaciarCarrito(Long usuarioId) {
         List<ItemCarrito> items = carritoRepo.findByUsuarioId(usuarioId);
         carritoRepo.deleteAll(items);
+    }
+
+    private CarritoItemDTO toDTO(ItemCarrito i) {
+        Coleccionable c = i.getColeccionable();
+        String imagen = (c.getImagenes() != null && !c.getImagenes().isEmpty())
+                ? "http://localhost:4002/imagenes?id=" + c.getImagenes().get(0).getId()
+                : null;
+
+        return new CarritoItemDTO(
+                i.getId(),
+                c.getId(),
+                c.getNombre(),
+                c.getPrecio(),
+                i.getCantidad(),
+                imagen
+        );
     }
 }

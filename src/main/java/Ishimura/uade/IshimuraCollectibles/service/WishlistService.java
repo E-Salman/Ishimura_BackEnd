@@ -10,6 +10,7 @@ import Ishimura.uade.IshimuraCollectibles.entity.Coleccionable;
 import Ishimura.uade.IshimuraCollectibles.entity.ItemWishlist;
 import Ishimura.uade.IshimuraCollectibles.entity.Usuario;
 import Ishimura.uade.IshimuraCollectibles.entity.dto.WishlistItemDTO;
+import Ishimura.uade.IshimuraCollectibles.exceptions.WishlistItemAlreadyExistsException;
 import Ishimura.uade.IshimuraCollectibles.repository.ColeccionableRepository;
 import Ishimura.uade.IshimuraCollectibles.repository.ItemWishlistRepository;
 
@@ -26,26 +27,15 @@ public class WishlistService {
         List<ItemWishlist> items = wishlistRepo.findByUsuarioId(usuarioId);
 
         return items.stream()
-                .map(i -> {
-                    Coleccionable c = i.getColeccionable();
-                    String imagen = (c.getImagenes() != null && !c.getImagenes().isEmpty())
-                            ? "http://localhost:4002/imagenes?id=" + c.getImagenes().get(0).getId()
-                            : null;
-
-                    return new WishlistItemDTO(
-                            i.getId(),
-                            c.getId(),
-                            c.getNombre(),
-                            c.getPrecio(),
-                            imagen
-                    );
-                })
+                .map(this::toDTO)
                 .collect(Collectors.toList());
     }
 
     public ItemWishlist agregarAWishlist(Usuario usuario, Long coleccionableId) {
         boolean existe = wishlistRepo.existsByUsuarioIdAndColeccionableId(usuario.getId(), coleccionableId);
-        if (existe) throw new RuntimeException("El coleccionable ya está en la wishlist");
+        if (existe) {
+            throw new WishlistItemAlreadyExistsException(usuario.getId(), coleccionableId);
+        }
 
         Coleccionable coleccionable = coleccionableRepo.findById(coleccionableId)
                 .orElseThrow(() -> new RuntimeException("Coleccionable no encontrado"));
@@ -64,5 +54,20 @@ public class WishlistService {
     public void vaciarWishlist(Long usuarioId) {
         List<ItemWishlist> items = wishlistRepo.findByUsuarioId(usuarioId);
         wishlistRepo.deleteAll(items);
+    }
+
+    private WishlistItemDTO toDTO(ItemWishlist i) {
+        Coleccionable c = i.getColeccionable();
+        String imagen = (c.getImagenes() != null && !c.getImagenes().isEmpty())
+                ? "http://localhost:4002/imagenes?id=" + c.getImagenes().get(0).getId()
+                : null;
+
+        return new WishlistItemDTO(
+                i.getId(),
+                c.getId(),
+                c.getNombre(),
+                c.getPrecio(),
+                imagen
+        );
     }
 }
