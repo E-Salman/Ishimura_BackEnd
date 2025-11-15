@@ -39,6 +39,22 @@ public class CarritoController {
         return ResponseEntity.ok(item);
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> actualizarCantidad(
+            @PathVariable Long id,
+            @RequestParam int cantidad) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Usuario usuario = (Usuario) auth.getPrincipal();
+
+        if (cantidad <= 0) {
+            carritoService.eliminarItem(id);
+            return ResponseEntity.noContent().build();
+        }
+
+        CarritoItemDTO actualizado = carritoService.actualizarCantidad(id, usuario.getId(), cantidad);
+        return ResponseEntity.ok(actualizado);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         carritoService.eliminarItem(id);

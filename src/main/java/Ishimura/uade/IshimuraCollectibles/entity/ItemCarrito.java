@@ -7,7 +7,15 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "item_carrito")
+@Table(
+    name = "item_carrito",
+    uniqueConstraints = {
+        @UniqueConstraint(
+            name = "uk_item_carrito_usuario_coleccionable",
+            columnNames = {"usuario_id", "coleccionable_id"}
+        )
+    }
+)
 public class ItemCarrito {
 
     @Id
