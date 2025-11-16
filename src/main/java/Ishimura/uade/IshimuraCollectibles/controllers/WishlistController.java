@@ -30,10 +30,10 @@ public class WishlistController {
     }
 
     @PostMapping("/{coleccionableId}")
-    public ResponseEntity<ItemWishlist> agregar(@PathVariable Long coleccionableId) {
+    public ResponseEntity<WishlistItemDTO> agregar(@PathVariable Long coleccionableId) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Usuario usuario = (Usuario) auth.getPrincipal();
-        ItemWishlist item = wishlistService.agregarAWishlist(usuario, coleccionableId);
+        WishlistItemDTO item = wishlistService.agregarAWishlist(usuario, coleccionableId);
         return ResponseEntity.ok(item);
     }
 

@@ -31,7 +31,7 @@ public class CarritoService {
                 .collect(Collectors.toList());
     }
 
-    public ItemCarrito agregarAlCarrito(Usuario usuario, Long coleccionableId, int cantidad) {
+    public CarritoItemDTO agregarAlCarrito(Usuario usuario, Long coleccionableId, int cantidad) {
         if (cantidad <= 0) {
             throw new IllegalArgumentException("La cantidad debe ser mayor que cero");
         }
@@ -42,7 +42,7 @@ public class CarritoService {
 
         if (existente != null) {
             existente.setCantidad(existente.getCantidad() + cantidad);
-            return carritoRepo.save(existente);
+            return toDTO(carritoRepo.save(existente));
         }
 
         Coleccionable coleccionable = coleccionableRepo.findById(coleccionableId)
@@ -53,7 +53,7 @@ public class CarritoService {
         item.setColeccionable(coleccionable);
         item.setCantidad(cantidad);
 
-        return carritoRepo.save(item);
+        return toDTO(carritoRepo.save(item));
     }
 
     public CarritoItemDTO actualizarCantidad(Long itemId, Long usuarioId, int cantidad) {
