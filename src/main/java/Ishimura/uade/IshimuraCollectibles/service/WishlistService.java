@@ -31,7 +31,7 @@ public class WishlistService {
                 .collect(Collectors.toList());
     }
 
-    public ItemWishlist agregarAWishlist(Usuario usuario, Long coleccionableId) {
+    public WishlistItemDTO agregarAWishlist(Usuario usuario, Long coleccionableId) {
         boolean existe = wishlistRepo.existsByUsuarioIdAndColeccionableId(usuario.getId(), coleccionableId);
         if (existe) {
             throw new WishlistItemAlreadyExistsException(usuario.getId(), coleccionableId);
@@ -44,7 +44,7 @@ public class WishlistService {
         item.setUsuario(usuario);
         item.setColeccionable(coleccionable);
 
-        return wishlistRepo.save(item);
+        return toDTO(wishlistRepo.save(item));
     }
 
     public void eliminarItem(Long id) {

@@ -34,8 +34,11 @@ public class JwtService {
                 .collect(Collectors.toList());
 
         String role = null;
+        Long userId = null;
+
         if (userDetails instanceof Ishimura.uade.IshimuraCollectibles.entity.Usuario u) {
             role = u.getRol() != null ? u.getRol().name() : null;
+            userId = u.getId();
         } else if (!authorities.isEmpty()) {
             role = authorities.get(0);
         }
@@ -44,8 +47,9 @@ public class JwtService {
                 .builder()
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .claim("authorities", authorities)
+                //.claim("authorities", authorities)
                 .claim("role", role)
+                .claim("userId", userId)
                 .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSecretKey())
                 .compact();

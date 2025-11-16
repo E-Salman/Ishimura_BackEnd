@@ -30,12 +30,12 @@ public class CarritoController {
     }
 
     @PostMapping("/{coleccionableId}")
-    public ResponseEntity<ItemCarrito> agregar(
+    public ResponseEntity<CarritoItemDTO> agregar(
             @PathVariable Long coleccionableId,
             @RequestParam(defaultValue = "1") int cantidad) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Usuario usuario = (Usuario) auth.getPrincipal();
-        ItemCarrito item = carritoService.agregarAlCarrito(usuario, coleccionableId, cantidad);
+        CarritoItemDTO item = carritoService.agregarAlCarrito(usuario, coleccionableId, cantidad);
         return ResponseEntity.ok(item);
     }
 
