@@ -47,6 +47,19 @@ public class OrdenController {
     return ResponseEntity.ok(ordenService.detallePorNumero(numeroOrden));
   }
 
+  // Todas las órdenes con detalle – vista ADMIN
+  @GetMapping("/admin/detalle")
+  public ResponseEntity<List<OrdenDetalleDTO>> todasOrdenesDetalle() {
+    return ResponseEntity.ok(ordenService.listarTodasOrdenesDetalle());
+  }
+
+  // Órdenes con detalle de un usuario específico – vista ADMIN
+  @GetMapping("/admin/usuario/{usuarioId}/detalle")
+  public ResponseEntity<List<OrdenDetalleDTO>> ordenesDetallePorUsuario(@PathVariable Long usuarioId) {
+    return ResponseEntity.ok(ordenService.listarOrdenesDetallePorUsuario(usuarioId));
+  }
+
+
   private Long resolveUserId(Principal principal) {
     String email = principal.getName();
     return userRepository.findByEmail(email)
