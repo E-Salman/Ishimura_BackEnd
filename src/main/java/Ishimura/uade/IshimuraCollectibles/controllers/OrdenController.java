@@ -53,11 +53,15 @@ public class OrdenController {
     return ResponseEntity.ok(ordenService.listarTodasOrdenesDetalle());
   }
 
-  // Órdenes con detalle de un usuario específico – vista ADMIN
-  @GetMapping("/admin/usuario/{usuarioId}/detalle")
-  public ResponseEntity<List<OrdenDetalleDTO>> ordenesDetallePorUsuario(@PathVariable Long usuarioId) {
-    return ResponseEntity.ok(ordenService.listarOrdenesDetallePorUsuario(usuarioId));
-  }
+// Órdenes con detalle de un usuario específico – vista ADMIN (por email)
+@GetMapping("/admin/usuario/detalle")
+public ResponseEntity<List<OrdenDetalleDTO>> ordenesDetallePorUsuario(@RequestParam String email) {
+  Usuario usuario = userRepository.findByEmail(email)
+      .orElseThrow(() -> new Ishimura.uade.IshimuraCollectibles.exceptions.UserNotFoundException(email));
+
+  return ResponseEntity.ok(ordenService.listarOrdenesDetallePorUsuario(usuario.getId()));
+}
+
 
 
   private Long resolveUserId(Principal principal) {
