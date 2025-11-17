@@ -208,7 +208,7 @@ public class OrdenServiceImpl implements OrdenService {
         o.getMetodoPago(),
         o.getCreadaEn(),
         items,
-        o.getUsuario() != null ? o.getUsuario().getEmail() : null   // 👈 email del cliente
+        o.getUsuario() != null ? o.getUsuario().getEmail() : null
     );
   }
 
@@ -228,7 +228,7 @@ public class OrdenServiceImpl implements OrdenService {
         o.getMetodoPago(),
         o.getCreadaEn(),
         items,
-        o.getUsuario() != null ? o.getUsuario().getEmail() : null   // 👈 también acá
+        o.getUsuario() != null ? o.getUsuario().getEmail() : null
     );
   }
 
