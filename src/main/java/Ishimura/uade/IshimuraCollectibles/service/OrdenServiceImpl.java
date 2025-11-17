@@ -199,14 +199,17 @@ public class OrdenServiceImpl implements OrdenService {
         it.getColeccionable().getNombre(),
         it.getCantidad(),
         it.getPrecioUnitario(),
-        it.getSubtotal())).toList();
+        it.getSubtotal()
+    )).toList();
 
     return new OrdenDetalleDTO(
         o.getNumeroOrden(),
         o.getMontoTotal(),
         o.getMetodoPago(),
         o.getCreadaEn(),
-        items);
+        items,
+        o.getUsuario() != null ? o.getUsuario().getEmail() : null   // 👈 email del cliente
+    );
   }
 
   private String generarNumeroOrden() {
@@ -224,7 +227,9 @@ public class OrdenServiceImpl implements OrdenService {
         total,
         o.getMetodoPago(),
         o.getCreadaEn(),
-        items);
+        items,
+        o.getUsuario() != null ? o.getUsuario().getEmail() : null   // 👈 también acá
+    );
   }
 
   private OrdenDetalleDTO toOrdenDetalleDTOAdmin(Orden o) {
@@ -239,6 +244,7 @@ public class OrdenServiceImpl implements OrdenService {
         c.getNombre(),
         it.getCantidad(),
         it.getPrecioUnitario(),
-        subtotal);
+        subtotal
+    );
   }
 }
