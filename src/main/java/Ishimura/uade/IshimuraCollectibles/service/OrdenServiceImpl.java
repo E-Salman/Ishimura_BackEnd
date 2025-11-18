@@ -2,8 +2,8 @@ package Ishimura.uade.IshimuraCollectibles.service;
 
 import Ishimura.uade.IshimuraCollectibles.entity.*;
 import Ishimura.uade.IshimuraCollectibles.entity.dto.*;
-import Ishimura.uade.IshimuraCollectibles.repository.*;
 import Ishimura.uade.IshimuraCollectibles.exceptions.*;
+import Ishimura.uade.IshimuraCollectibles.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,17 +20,19 @@ public class OrdenServiceImpl implements OrdenService {
   private final UserRepository userRepository;
   private final MostrarColeccionableRepository coleccionableRepository;
   private final CatalogoRepository catalogoRepository;
-  private PricingService pricingService;
+  private final PricingService pricingService;
 
   public OrdenServiceImpl(
       OrdenRepository ordenRepository,
       UserRepository userRepository,
       MostrarColeccionableRepository coleccionableRepository,
-      CatalogoRepository catalogoRepository) {
+      CatalogoRepository catalogoRepository,
+      PricingService pricingService) {
     this.ordenRepository = ordenRepository;
     this.userRepository = userRepository;
     this.coleccionableRepository = coleccionableRepository;
     this.catalogoRepository = catalogoRepository;
+    this.pricingService = pricingService;
   }
 
   // ===================== CREAR ORDEN =====================
@@ -71,7 +73,7 @@ public class OrdenServiceImpl implements OrdenService {
       int cantidad = i.getCantidad();
 
       if (stockActual < cantidad) {
-        throw new IllegalStateException("No hay stock suficiente para el producto: " + col.getNombre());
+        throw new InvalidDomainStateException("No hay stock suficiente para el producto: " + col.getNombre());
       }
 
       int nuevoStock = stockActual - cantidad;
@@ -199,14 +201,17 @@ public class OrdenServiceImpl implements OrdenService {
         it.getColeccionable().getNombre(),
         it.getCantidad(),
         it.getPrecioUnitario(),
-        it.getSubtotal())).toList();
+        it.getSubtotal()
+    )).toList();
 
     return new OrdenDetalleDTO(
         o.getNumeroOrden(),
         o.getMontoTotal(),
         o.getMetodoPago(),
         o.getCreadaEn(),
-        items);
+        items,
+        o.getUsuario() != null ? o.getUsuario().getEmail() : null
+    );
   }
 
   private String generarNumeroOrden() {
@@ -224,7 +229,9 @@ public class OrdenServiceImpl implements OrdenService {
         total,
         o.getMetodoPago(),
         o.getCreadaEn(),
-        items);
+        items,
+        o.getUsuario() != null ? o.getUsuario().getEmail() : null
+    );
   }
 
   private OrdenDetalleDTO toOrdenDetalleDTOAdmin(Orden o) {
@@ -239,6 +246,7 @@ public class OrdenServiceImpl implements OrdenService {
         c.getNombre(),
         it.getCantidad(),
         it.getPrecioUnitario(),
-        subtotal);
+        subtotal
+    );
   }
 }

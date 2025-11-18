@@ -17,4 +17,5 @@ public class OrdenDetalleDTO {
   private String metodoPago;
   private LocalDateTime creadaEn;
   private List<OrdenItemDTO> items;
+  private String emailUsuario;
 }
