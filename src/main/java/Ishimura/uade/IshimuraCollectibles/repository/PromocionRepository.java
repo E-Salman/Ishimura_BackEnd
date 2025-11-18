@@ -2,6 +2,8 @@ package Ishimura.uade.IshimuraCollectibles.repository;
 
 import Ishimura.uade.IshimuraCollectibles.entity.Promocion;
 import Ishimura.uade.IshimuraCollectibles.entity.PromotionScopeType;
+import Ishimura.uade.IshimuraCollectibles.entity.dto.PromocionDTO;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;

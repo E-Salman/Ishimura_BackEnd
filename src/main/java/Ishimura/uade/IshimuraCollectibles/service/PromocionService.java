@@ -3,6 +3,7 @@ package Ishimura.uade.IshimuraCollectibles.service;
 import Ishimura.uade.IshimuraCollectibles.entity.Promocion;
 import Ishimura.uade.IshimuraCollectibles.entity.PromotionScopeType;
 import Ishimura.uade.IshimuraCollectibles.entity.PromotionType;
+import Ishimura.uade.IshimuraCollectibles.entity.dto.PromocionDTO;
 import Ishimura.uade.IshimuraCollectibles.exceptions.PromotionConflictException;
 import Ishimura.uade.IshimuraCollectibles.repository.PromocionRepository;
 import org.springframework.stereotype.Service;
@@ -18,13 +19,28 @@ public class PromocionService {
     this.repo = repo;
   }
 
-  public Promocion crear(Promocion p) {
+  public PromocionDTO crear(PromocionDTO p) {
+    System.out.println(p);
+    System.out.println("NYAAAAAAAAA");
     validarCampos(p);
     validarConflicto(p, null);
-    return repo.save(p);
+    Promocion nPromocion = new Promocion();
+    nPromocion.setTipo(p.getTipo());
+    nPromocion.setValor(p.getValor());
+    nPromocion.setScopeType(p.getScopeType());
+    nPromocion.setScopeId(p.getScopeId());
+    nPromocion.setInicio(p.getInicio());
+    nPromocion.setFin(p.getFin());
+    nPromocion.setPrioridad(p.getPrioridad());
+    nPromocion.setActiva(p.isActiva());
+    nPromocion.setStackable(p.isStackable());
+    repo.save(nPromocion);
+    return p;
   }
 
-  public Promocion actualizar(Long id, Promocion body) {
+  public PromocionDTO actualizar(Long id, PromocionDTO body) {
+    validarCampos(body);
+    validarConflicto(body, id);
     Promocion p = repo.findById(id).orElseThrow();
     // aplicar cambios (parciales)
     if (body.getTipo() != null)
@@ -44,12 +60,11 @@ public class PromocionService {
     p.setActiva(body.isActiva());
     p.setStackable(body.isStackable());
 
-    validarCampos(p);
-    validarConflicto(p, id);
-    return repo.save(p);
+    repo.save(p);
+    return body;
   }
 
-  private void validarConflicto(Promocion p, Long ignoreId) {
+  private void validarConflicto(PromocionDTO p, Long ignoreId) {
     if (!p.isActiva())
       return; // solo nos importan las activas
     if (p.getScopeType() != PromotionScopeType.ITEM || p.getScopeId() == null)
@@ -76,7 +91,7 @@ public class PromocionService {
     return !endA.isBefore(startB) && !endB.isBefore(startA);
   }
 
-  private void validarCampos(Promocion p) {
+  private void validarCampos(PromocionDTO p) {
     if (p.getTipo() == null) {
       throw new IllegalArgumentException("tipo es requerido (PERCENT o FIXED)");
     }
@@ -110,5 +125,25 @@ public class PromocionService {
     if (p.getScopeType() == PromotionScopeType.ITEM && p.getScopeId() == null) {
       throw new IllegalArgumentException("scopeId es requerido cuando scopeType=ITEM");
     }
+  }
+
+  public List<PromocionDTO> activas(Long coleccionableId) {
+    List<Promocion> listaActivas = repo.findActiveForItem(coleccionableId, LocalDateTime.now());
+    List<PromocionDTO> listaActivasDTO = new java.util.ArrayList<>();
+    for (Promocion promocion : listaActivas) {
+      PromocionDTO dto = new PromocionDTO();
+      dto.setTipo(promocion.getTipo());
+      dto.setValor(promocion.getValor());
+      dto.setScopeType(promocion.getScopeType());
+      dto.setScopeId(promocion.getScopeId());
+      dto.setInicio(promocion.getInicio());
+      dto.setFin(promocion.getFin());
+      dto.setActiva(promocion.isActiva());
+      dto.setPrioridad(promocion.getPrioridad());
+      dto.setStackable(promocion.isStackable());
+      listaActivasDTO.add(dto);
+
+    }
+    return listaActivasDTO;
   }
 }
