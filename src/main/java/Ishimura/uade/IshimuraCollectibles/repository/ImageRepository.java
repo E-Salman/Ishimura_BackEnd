@@ -14,11 +14,6 @@ import org.springframework.stereotype.Repository;
 public interface ImageRepository extends JpaRepository<Imagen, Long> {
     List<Imagen> findByColeccionableIdOrderByIdAsc(Long coleccionableId);
 
-    @Query("""
-            select i.id
-            from Imagen i
-            where i.coleccionable.id = :coleId
-            order by i.id
-            """)
-    Optional<Long> findTopIdByColeccionableId(@Param("coleId") Long coleId);
+    @Query("SELECT i.id FROM Imagen i WHERE i.coleccionable.id = :id ORDER BY i.id ASC LIMIT 1")
+    Optional<Long> findTopByColeccionableIdOrderByIdAsc(@Param("id") Long coleId);
 }

@@ -25,13 +25,14 @@ public class OrdenController {
   @PostMapping
   public ResponseEntity<OrdenDetalleDTO> crear(@RequestBody CrearOrdenDTO dto, Principal principal) {
     Long usuarioId = resolveUserId(principal);
-    return ResponseEntity.ok(ordenService.crearOrden(usuarioId, dto));
+    OrdenDetalleDTO nOrden = ordenService.crearOrden(usuarioId, dto);    
+    return ResponseEntity.ok(nOrden);
   }
 
   // listar (resumen) mis órdenes: nro, monto, fecha
   @GetMapping("/mias")
   public ResponseEntity<List<OrdenResumenDTO>> mias(Principal principal) {
-    Long usuarioId = resolveUserId(principal);
+    Long usuarioId = resolveUserId(principal);    
     return ResponseEntity.ok(ordenService.listarResumenMias(usuarioId));
   }
 

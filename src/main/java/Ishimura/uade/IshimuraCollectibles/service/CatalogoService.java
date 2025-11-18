@@ -31,7 +31,8 @@ public class CatalogoService {
     public List<CatalogoListItemDTO> getListado() {
         return repo.findAll().stream().map(item -> {
             Coleccionable c = item.getColeccionable();
-            Long firstImageId = imageRepo.findTopIdByColeccionableId(c.getId()).orElse(null);
+            Long firstImageId = imageRepo.findTopByColeccionableIdOrderByIdAsc(c.getId()).orElse(null);
+            System.out.println("POST LONG");
             return new CatalogoListItemDTO(
                 c.getId(),
                 c.getNombre(),

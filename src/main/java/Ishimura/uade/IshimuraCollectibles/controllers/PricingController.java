@@ -13,6 +13,7 @@ public class PricingController {
   private final PricingService pricingService;
 
   public PricingController(MostrarColeccionableRepository coleRepo, PricingService pricingService) {
+    System.out.println(">>> Controller created by Spring. pricingService = " + pricingService);
     this.coleRepo = coleRepo;
     this.pricingService = pricingService;
   }

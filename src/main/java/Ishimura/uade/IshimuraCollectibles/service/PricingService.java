@@ -11,6 +11,7 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.stereotype.Service;
+import Ishimura.uade.IshimuraCollectibles.service.PricingService;
 
 @Service
 public class PricingService {
