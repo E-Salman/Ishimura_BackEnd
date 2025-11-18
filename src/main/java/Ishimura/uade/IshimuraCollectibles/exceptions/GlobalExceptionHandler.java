@@ -22,9 +22,11 @@ public class GlobalExceptionHandler {
   public ProblemDetail handleDomain(DomainException ex, HttpServletRequest req) {
     HttpStatus status = switch (ex.getCode()) {
       case CATEGORY_ALREADY_EXISTS, LINE_ALREADY_EXISTS, PROMOTION_CONFLICT,
-           COLLECTIBLE_ALREADY_EXISTS, WISHLIST_ITEM_ALREADY_EXISTS -> HttpStatus.CONFLICT; // 409
+          COLLECTIBLE_ALREADY_EXISTS, WISHLIST_ITEM_ALREADY_EXISTS ->
+        HttpStatus.CONFLICT; // 409
       case CATEGORY_NOT_FOUND, BRAND_NOT_FOUND, LINE_NOT_FOUND, USER_NOT_FOUND,
-           ORDER_NOT_FOUND, IMAGE_NOT_FOUND, COLLECTIBLE_NOT_FOUND, CATALOG_ITEM_NOT_FOUND -> HttpStatus.NOT_FOUND; // 404
+          ORDER_NOT_FOUND, IMAGE_NOT_FOUND, COLLECTIBLE_NOT_FOUND, CATALOG_ITEM_NOT_FOUND ->
+        HttpStatus.NOT_FOUND; // 404
       case INVALID_DOMAIN_STATE -> HttpStatus.UNPROCESSABLE_ENTITY; // 422
       default -> HttpStatus.UNPROCESSABLE_ENTITY;
     };
@@ -53,7 +55,8 @@ public class GlobalExceptionHandler {
   // 2.2) Entidad no encontrada por JPA -> 404
   @ExceptionHandler(EntityNotFoundException.class)
   public ProblemDetail handleEntityNotFound(EntityNotFoundException ex, HttpServletRequest req) {
-    return pd(HttpStatus.NOT_FOUND, "Recurso no encontrado", ex.getMessage(), "ENTITY_NOT_FOUND", req.getRequestURI(), null);
+    return pd(HttpStatus.NOT_FOUND, "Recurso no encontrado", ex.getMessage(), "ENTITY_NOT_FOUND", req.getRequestURI(),
+        null);
   }
 
   // 3) Seguridad
@@ -84,6 +87,15 @@ public class GlobalExceptionHandler {
     pd.setTitle("Conflicto de integridad de datos");
     pd.setDetail("La operación viola una restricción de la base de datos");
     pd.setProperty("code", "DATA_INTEGRITY_VIOLATION");
+    pd.setProperty("instance", req.getRequestURI());
+    return pd;
+  }
+
+  @ExceptionHandler(IllegalStateException.class)
+  public ProblemDetail handleIllegalStateException(IllegalStateException ex, HttpServletRequest req) {
+    ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.UNPROCESSABLE_ENTITY);
+    pd.setDetail(ex.getMessage());
+    pd.setProperty("code", "IllegalStateException");
     pd.setProperty("instance", req.getRequestURI());
     return pd;
   }
