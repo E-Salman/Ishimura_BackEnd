@@ -73,4 +73,3 @@ public class MostrarColeccionableController {
         return ResponseEntity.noContent().build();
     }
 }
-
