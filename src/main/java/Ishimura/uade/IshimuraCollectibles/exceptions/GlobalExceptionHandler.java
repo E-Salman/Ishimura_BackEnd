@@ -64,7 +64,7 @@ public class GlobalExceptionHandler {
   public ProblemDetail handleAuth(AuthenticationException ex, HttpServletRequest req) {
     ProblemDetail pd = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
     pd.setTitle("No autorizado");
-    pd.setDetail("Se requiere autenticación");
+    pd.setDetail("Credenciales inválidas. Verificá tu email y contraseña.");
     pd.setProperty("code", "AUTH_UNAUTHORIZED");
     pd.setProperty("instance", req.getRequestURI());
     return pd;
