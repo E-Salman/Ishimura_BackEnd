@@ -102,7 +102,7 @@ public class SecurityConfig {
                                                 .hasAuthority(Rol.ADMIN.name())
 
                                                 .requestMatchers("/catalogo", "/catalogo/*")
-                                                .hasAnyAuthority(Rol.USER.name(), Rol.ADMIN.name())
+                                                .permitAll()
                                                 .requestMatchers("/catalogo/*/incrementarstock",
                                                                 "/catalogo/*/decrementarstock")
                                                 .hasAuthority(Rol.ADMIN.name())
