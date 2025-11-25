@@ -70,7 +70,13 @@ public class PromocionService {
     if (p.getScopeType() != PromotionScopeType.ITEM || p.getScopeId() == null)
       return; // regla: solo ITEM
 
-    List<Promocion> activas = repo.findByScopeTypeAndScopeIdAndActiva(PromotionScopeType.ITEM, p.getScopeId(), true);
+    LocalDateTime now = LocalDateTime.now();
+    List<Promocion> activas = repo.findByScopeTypeAndScopeIdAndActiva(PromotionScopeType.ITEM, p.getScopeId(), true)
+        .stream()
+        // ignorar promociones vencidas (fin < ahora)
+        .filter(other -> other.getFin() == null || !other.getFin().isBefore(now))
+        .toList();
+
     LocalDateTime s1 = p.getInicio();
     LocalDateTime e1 = p.getFin();
     for (Promocion other : activas) {
