@@ -3,6 +3,7 @@ package Ishimura.uade.IshimuraCollectibles.service;
 import Ishimura.uade.IshimuraCollectibles.entity.Coleccionable;
 import Ishimura.uade.IshimuraCollectibles.entity.Promocion;
 import Ishimura.uade.IshimuraCollectibles.entity.PromotionType;
+import Ishimura.uade.IshimuraCollectibles.entity.dto.PromocionDTO;
 import Ishimura.uade.IshimuraCollectibles.repository.PromocionRepository;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
