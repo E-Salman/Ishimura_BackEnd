@@ -30,8 +30,6 @@ public class MostrarColeccionableController {
     @Autowired
     private ColeccionableService coleccionableService;
 
-    // Unificamos el servicio: usaremos ColeccionableService
-
     @Autowired
     private ImageService imageService;
 
@@ -73,4 +71,3 @@ public class MostrarColeccionableController {
         return ResponseEntity.noContent().build();
     }
 }
-

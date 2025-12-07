@@ -33,13 +33,11 @@ public class WishlistService {
 
     public WishlistItemDTO agregarAWishlist(Usuario usuario, Long coleccionableId) {
         boolean existe = wishlistRepo.existsByUsuarioIdAndColeccionableId(usuario.getId(), coleccionableId);
-        if (existe) {
-            throw new WishlistItemAlreadyExistsException(usuario.getId(), coleccionableId);
-        }
-
         Coleccionable coleccionable = coleccionableRepo.findById(coleccionableId)
                 .orElseThrow(() -> new RuntimeException("Coleccionable no encontrado"));
-
+        if (existe) {
+            throw new WishlistItemAlreadyExistsException(coleccionable.getNombre());
+        }
         ItemWishlist item = new ItemWishlist();
         item.setUsuario(usuario);
         item.setColeccionable(coleccionable);
@@ -67,7 +65,6 @@ public class WishlistService {
                 c.getId(),
                 c.getNombre(),
                 c.getPrecio(),
-                imagen
-        );
+                imagen);
     }
 }
