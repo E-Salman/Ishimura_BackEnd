@@ -30,8 +30,6 @@ public class MostrarColeccionableController {
     @Autowired
     private ColeccionableService coleccionableService;
 
-    // Unificamos el servicio: usaremos ColeccionableService
-
     @Autowired
     private ImageService imageService;
 
