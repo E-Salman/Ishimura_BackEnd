@@ -3,6 +3,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import Ishimura.uade.IshimuraCollectibles.entity.Catalogo;
 import Ishimura.uade.IshimuraCollectibles.entity.Coleccionable;
@@ -11,6 +12,7 @@ import Ishimura.uade.IshimuraCollectibles.repository.CatalogoRepository;
 import Ishimura.uade.IshimuraCollectibles.repository.ImageRepository;
 import Ishimura.uade.IshimuraCollectibles.exceptions.CatalogItemNotFoundException;
 import Ishimura.uade.IshimuraCollectibles.exceptions.InvalidDomainStateException;
+import Ishimura.uade.IshimuraCollectibles.exceptions.CollectibleNotVisibleException;
 
 @Service
 public class CatalogoService {
@@ -29,7 +31,10 @@ public class CatalogoService {
     }
 
     public List<CatalogoListItemDTO> getListado() {
-        return repo.findAll().stream().map(item -> {
+        boolean incluirOcultos = esAdmin();
+        return repo.findAll().stream()
+            .filter(item -> incluirOcultos || Boolean.TRUE.equals(item.getColeccionable().getVisibilidad()))
+            .map(item -> {
             Coleccionable c = item.getColeccionable();
             Long firstImageId = imageRepo.findTopByColeccionableIdOrderByIdAsc(c.getId()).orElse(null);
             System.out.println("POST LONG");
@@ -44,8 +49,12 @@ public class CatalogoService {
     }
     
     public Catalogo stockProducto(Long coleccionableId) {
-        return repo.findById(coleccionableId)
+        Catalogo item = repo.findById(coleccionableId)
                    .orElseThrow(() -> new CatalogItemNotFoundException(coleccionableId));
+        if (!esAdmin() && Boolean.FALSE.equals(item.getColeccionable().getVisibilidad())) {
+            throw new CollectibleNotVisibleException();
+        }
+        return item;
     }
 
     public void cambiarStock(Long coleccionableId, int nuevoStock) {
@@ -79,5 +88,11 @@ public class CatalogoService {
         }
         repo.updateStock(coleccionableId, nuevo);
         repo.save(item);
+    }
+
+    private boolean esAdmin() {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || auth.getAuthorities() == null) return false;
+        return auth.getAuthorities().stream().anyMatch(a -> "ADMIN".equals(a.getAuthority()));
     }
 }

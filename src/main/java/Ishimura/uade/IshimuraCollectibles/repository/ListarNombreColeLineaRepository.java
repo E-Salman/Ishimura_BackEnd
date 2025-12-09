@@ -15,29 +15,33 @@ public interface ListarNombreColeLineaRepository extends JpaRepository<Coleccion
                         select new Ishimura.uade.IshimuraCollectibles.entity.dto.ListarColeLineaDTO(c.id, c.nombre)
                         from Linea l join l.coleccionables c
                         where l.id = :lineaId
+                        and (:incluirOcultos = true or c.visibilidad = true)
                         """)
-        List<ListarColeLineaDTO> listarColeccionablesPorLinea(@Param("lineaId") Long lineaId);
+        List<ListarColeLineaDTO> listarColeccionablesPorLinea(@Param("lineaId") Long lineaId, @Param("incluirOcultos") boolean incluirOcultos);
 
         @Query("""
                         select new Ishimura.uade.IshimuraCollectibles.entity.dto.ListarColeLineaDTO(c.id, c.nombre)
                         from Linea l join l.coleccionables c
                         where l.marca.id = :marcaId
+                        and (:incluirOcultos = true or c.visibilidad = true)
                         """)
-        List<ListarColeLineaDTO> listarColeccionablesPorMarca(@Param("marcaId") Long marcaId);
+        List<ListarColeLineaDTO> listarColeccionablesPorMarca(@Param("marcaId") Long marcaId, @Param("incluirOcultos") boolean incluirOcultos);
 
         @Query("""
                         select new Ishimura.uade.IshimuraCollectibles.entity.dto.ListarColeLineaDTO(c.id, c.nombre)
                         from Coleccionable c
                         where c.precio <= :precio
+                        and (:incluirOcultos = true or c.visibilidad = true)
                         """)
-        List<ListarColeLineaDTO> listarColeccionablesPorDebajoDe(@Param("precio") Double precio);
+        List<ListarColeLineaDTO> listarColeccionablesPorDebajoDe(@Param("precio") Double precio, @Param("incluirOcultos") boolean incluirOcultos);
 
         @Query("""
                         select new Ishimura.uade.IshimuraCollectibles.entity.dto.ListarColeLineaDTO(c.id, c.nombre)
                         from Coleccionable c
                         where c.precio >= :precio
+                        and (:incluirOcultos = true or c.visibilidad = true)
                         """)
-        List<ListarColeLineaDTO> listarColeccionablesPorEncimaDe(@Param("precio") Double precio);
+        List<ListarColeLineaDTO> listarColeccionablesPorEncimaDe(@Param("precio") Double precio, @Param("incluirOcultos") boolean incluirOcultos);
 
         @Query("select new Ishimura.uade.IshimuraCollectibles.entity.dto.LineaResumenDTO(l.id, l.nombre) from Linea l where l.marca.id = :marcaId")
         List<LineaResumenDTO> listarLineasPorMarca(@Param("marcaId") Long marcaId);

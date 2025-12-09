@@ -57,4 +57,14 @@ public class Coleccionable {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private List<Imagen> imagenes = new ArrayList<>();
+
+    @Column(nullable = false, columnDefinition = "TINYINT(1) DEFAULT 1")
+    private Boolean visibilidad = true;
+
+    @PrePersist
+    private void ensureVisibilidad() {
+        if (visibilidad == null) {
+            visibilidad = true;
+        }
+    }
 }

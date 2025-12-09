@@ -17,6 +17,7 @@ public class MostrarColeccionableDTO {
     private String descripcion;
     private Double precio;
     private List<Long> imagenes; //Deberia guardar el ID de las imagenes, o las imagenes en si?
+    private Boolean visibilidad;
 
     private Long lineaId;
     private String lineaNombre;

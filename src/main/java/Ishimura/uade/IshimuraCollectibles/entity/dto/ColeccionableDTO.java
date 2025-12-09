@@ -2,9 +2,7 @@ package Ishimura.uade.IshimuraCollectibles.entity.dto;
 
 import java.util.List;
 
-import Ishimura.uade.IshimuraCollectibles.model.Imagen;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,4 +15,5 @@ public class ColeccionableDTO {
     private Double precio;
     private Long linea;
     private List<Long> imagenes; //Deberia guardar el ID de las imagenes, o las imagenes en si?
+    private Boolean visibilidad;
 }

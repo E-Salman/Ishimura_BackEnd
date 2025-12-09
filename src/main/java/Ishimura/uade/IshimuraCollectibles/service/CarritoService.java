@@ -5,12 +5,14 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import Ishimura.uade.IshimuraCollectibles.entity.Coleccionable;
 import Ishimura.uade.IshimuraCollectibles.entity.ItemCarrito;
 import Ishimura.uade.IshimuraCollectibles.entity.Usuario;
 import Ishimura.uade.IshimuraCollectibles.entity.dto.CarritoItemDTO;
+import Ishimura.uade.IshimuraCollectibles.exceptions.CollectibleNotVisibleException;
 import Ishimura.uade.IshimuraCollectibles.repository.ColeccionableRepository;
 import Ishimura.uade.IshimuraCollectibles.repository.ItemCarritoRepository;
 
@@ -25,8 +27,10 @@ public class CarritoService {
 
     public List<CarritoItemDTO> obtenerCarrito(Long usuarioId) {
         List<ItemCarrito> items = carritoRepo.findByUsuarioId(usuarioId);
+        boolean incluirOcultos = esAdmin();
 
         return items.stream()
+                .filter(i -> incluirOcultos || Boolean.TRUE.equals(i.getColeccionable().getVisibilidad()))
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }
@@ -47,6 +51,9 @@ public class CarritoService {
 
         Coleccionable coleccionable = coleccionableRepo.findById(coleccionableId)
                 .orElseThrow(() -> new RuntimeException("Coleccionable no encontrado"));
+        if (!esAdmin() && Boolean.FALSE.equals(coleccionable.getVisibilidad())) {
+            throw new CollectibleNotVisibleException();
+        }
 
         ItemCarrito item = new ItemCarrito();
         item.setUsuario(usuario);
@@ -97,5 +104,11 @@ public class CarritoService {
                 i.getCantidad(),
                 imagen
         );
+    }
+
+    private boolean esAdmin() {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || auth.getAuthorities() == null) return false;
+        return auth.getAuthorities().stream().anyMatch(a -> "ADMIN".equals(a.getAuthority()));
     }
 }
