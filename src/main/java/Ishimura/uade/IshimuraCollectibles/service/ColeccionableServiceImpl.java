@@ -159,17 +159,14 @@ public class ColeccionableServiceImpl implements ColeccionableService {
                 Coleccionable existente = mostrarAtributosRepository.findById(id)
                                 .orElseThrow(() -> new CollectibleNotFoundException(id));
 
-                // Borrar dependientes para evitar FK
-                var imgs = imageRepository.findByColeccionableIdOrderByIdAsc(id);
-                if (!imgs.isEmpty()) {
-                        imageRepository.deleteAll(imgs);
-                }
-                itemCarritoRepository.deleteByColeccionableId(id);
-                itemWishlistRepository.deleteByColeccionableId(id);
-                catalogoRepository.deleteById(id);
+                // Soft delete: ocultar y poner stock en 0
+                existente.setVisibilidad(false);
+                mostrarAtributosRepository.save(existente);
 
-                // Borrar coleccionable
-                mostrarAtributosRepository.delete(existente);
+                catalogoRepository.findById(id).ifPresent(c -> {
+                        c.setStock(0);
+                        catalogoRepository.save(c);
+                });
         }
 
         private boolean esAdmin() {

@@ -10,6 +10,8 @@ import lombok.ToString;
 
 import java.sql.Blob;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import Ishimura.uade.IshimuraCollectibles.entity.Coleccionable;
 import Ishimura.uade.IshimuraCollectibles.entity.Marca;
 
@@ -25,6 +27,9 @@ public class Imagen {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    @JsonIgnore
     private Blob image;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
