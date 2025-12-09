@@ -13,6 +13,7 @@ import Ishimura.uade.IshimuraCollectibles.repository.ImageRepository;
 import Ishimura.uade.IshimuraCollectibles.repository.MostrarColeccionableRepository;
 import Ishimura.uade.IshimuraCollectibles.repository.MostrarLineaRepository;
 import Ishimura.uade.IshimuraCollectibles.exceptions.CollectibleNotFoundException;
+import Ishimura.uade.IshimuraCollectibles.exceptions.CollectibleNotVisibleException;
 import Ishimura.uade.IshimuraCollectibles.exceptions.ImageNotFoundException;
 import Ishimura.uade.IshimuraCollectibles.exceptions.LineaNotFoundException;
 import Ishimura.uade.IshimuraCollectibles.exceptions.CollectibleDuplicateException;
@@ -24,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -55,6 +57,10 @@ public class ColeccionableServiceImpl implements ColeccionableService {
                 Coleccionable col = mostrarAtributosRepository.findById(id)
                                 .orElseThrow(() -> new CollectibleNotFoundException(id));
 
+                if (!esAdmin() && Boolean.FALSE.equals(col.getVisibilidad())) {
+                        throw new CollectibleNotVisibleException();
+                }
+
                 List<Long> idImagenes = col.getImagenes().stream().map(Imagen::getId).collect(Collectors.toList());
                 Long lineaId = col.getLinea() != null ? col.getLinea().getId() : null;
                 String nombreLinea = col.getLinea() != null ? col.getLinea().getNombre() : null;
@@ -67,6 +73,7 @@ public class ColeccionableServiceImpl implements ColeccionableService {
                                 col.getDescription(),
                                 col.getPrecio(),
                                 idImagenes,
+                                col.getVisibilidad(),
                                 lineaId,
                                 nombreLinea,
                                 marcaId,
@@ -86,6 +93,7 @@ public class ColeccionableServiceImpl implements ColeccionableService {
                 coleccionable.setNombre(coleccionableDTO.getNombre());
                 coleccionable.setDescription(coleccionableDTO.getDescripcion());
                 coleccionable.setPrecio(coleccionableDTO.getPrecio());
+                coleccionable.setVisibilidad(coleccionableDTO.getVisibilidad() != null ? coleccionableDTO.getVisibilidad() : Boolean.TRUE);
                 List<Imagen> imagenes = new LinkedList<>();
                 Imagen tempImg;
                 for (Long id : coleccionableDTO.getImagenes()) {
@@ -123,6 +131,7 @@ public class ColeccionableServiceImpl implements ColeccionableService {
                 if (dto.getNombre() != null) existente.setNombre(dto.getNombre());
                 if (dto.getDescripcion() != null) existente.setDescription(dto.getDescripcion());
                 if (dto.getPrecio() != null) existente.setPrecio(dto.getPrecio());
+                if (dto.getVisibilidad() != null) existente.setVisibilidad(dto.getVisibilidad());
 
                 if (dto.getLinea() != null) {
                         Linea nuevaLinea = lineaRepository.findById(dto.getLinea())
@@ -161,5 +170,11 @@ public class ColeccionableServiceImpl implements ColeccionableService {
 
                 // Borrar coleccionable
                 mostrarAtributosRepository.delete(existente);
+        }
+
+        private boolean esAdmin() {
+                var auth = SecurityContextHolder.getContext().getAuthentication();
+                if (auth == null || auth.getAuthorities() == null) return false;
+                return auth.getAuthorities().stream().anyMatch(a -> "ADMIN".equals(a.getAuthority()));
         }
 }

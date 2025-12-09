@@ -41,6 +41,7 @@ public class OrdenServiceImpl implements OrdenService {
   public OrdenDetalleDTO crearOrden(Long usuarioId, CrearOrdenDTO dto) {
     Usuario usuario = userRepository.findById(usuarioId)
         .orElseThrow(() -> new UserNotFoundException(usuarioId));
+    boolean esAdmin = usuario.getRol() == Rol.ADMIN;
 
     Orden orden = new Orden();
     orden.setNumeroOrden(generarNumeroOrden());
@@ -65,6 +66,9 @@ public class OrdenServiceImpl implements OrdenService {
     for (ItemDTO i : dto.getItems()) {
       var col = coleccionableRepository.findById(i.getColeccionableId())
           .orElseThrow(() -> new CollectibleNotFoundException(i.getColeccionableId()));
+      if (!esAdmin && Boolean.FALSE.equals(col.getVisibilidad())) {
+        throw new CollectibleNotVisibleException();
+      }
 
       var catalogo = catalogoRepository.findById(i.getColeccionableId())
           .orElseThrow(() -> new CollectibleNotFoundException(i.getColeccionableId()));

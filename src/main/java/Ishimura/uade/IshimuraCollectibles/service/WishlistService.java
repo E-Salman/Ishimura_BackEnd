@@ -5,12 +5,14 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import Ishimura.uade.IshimuraCollectibles.entity.Coleccionable;
 import Ishimura.uade.IshimuraCollectibles.entity.ItemWishlist;
 import Ishimura.uade.IshimuraCollectibles.entity.Usuario;
 import Ishimura.uade.IshimuraCollectibles.entity.dto.WishlistItemDTO;
 import Ishimura.uade.IshimuraCollectibles.exceptions.WishlistItemAlreadyExistsException;
+import Ishimura.uade.IshimuraCollectibles.exceptions.CollectibleNotVisibleException;
 import Ishimura.uade.IshimuraCollectibles.repository.ColeccionableRepository;
 import Ishimura.uade.IshimuraCollectibles.repository.ItemWishlistRepository;
 
@@ -25,8 +27,10 @@ public class WishlistService {
 
     public List<WishlistItemDTO> obtenerWishlist(Long usuarioId) {
         List<ItemWishlist> items = wishlistRepo.findByUsuarioId(usuarioId);
+        boolean incluirOcultos = esAdmin();
 
         return items.stream()
+                .filter(i -> incluirOcultos || Boolean.TRUE.equals(i.getColeccionable().getVisibilidad()))
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }
@@ -35,6 +39,9 @@ public class WishlistService {
         boolean existe = wishlistRepo.existsByUsuarioIdAndColeccionableId(usuario.getId(), coleccionableId);
         Coleccionable coleccionable = coleccionableRepo.findById(coleccionableId)
                 .orElseThrow(() -> new RuntimeException("Coleccionable no encontrado"));
+        if (!esAdmin() && Boolean.FALSE.equals(coleccionable.getVisibilidad())) {
+            throw new CollectibleNotVisibleException();
+        }
         if (existe) {
             throw new WishlistItemAlreadyExistsException(coleccionable.getNombre());
         }
@@ -66,5 +73,11 @@ public class WishlistService {
                 c.getNombre(),
                 c.getPrecio(),
                 imagen);
+    }
+
+    private boolean esAdmin() {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || auth.getAuthorities() == null) return false;
+        return auth.getAuthorities().stream().anyMatch(a -> "ADMIN".equals(a.getAuthority()));
     }
 }
